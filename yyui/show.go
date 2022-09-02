@@ -85,12 +85,13 @@ func (s *ShowInput) PicKitDirContainer() *fyne.Container {
 			}
 			//设置输入框内容
 			picKitDirEntry.SetText(list.Path())
+			s.PicKitDir = picKitDirEntry.Text
 		}, s.Win)
 	})
 	return container.New(layout.NewGridLayout(3), picKitDirLabel, picKitDirEntry, picKitDirButton)
 }
 
-func (s *ShowInput) publicDirContainer() *fyne.Container {
+func (s *ShowInput) PublicDirContainer() *fyne.Container {
 	// 公共文件目录
 	publicDirLabel := widget.NewLabel("公共文件目录")
 	publicDirEntry := widget.NewEntry()
@@ -125,10 +126,9 @@ func (s *ShowInput) UploadedPicFileContainer() *fyne.Container {
 				log.Println("Cancelled")
 				return
 			}
-
 			uploadedPicFileEntry.SetText(reader.URI().Path()) //把读取到的路径显示到输入框中
+			s.UploadedImageConfig = uploadedPicFileEntry.Text
 		}, s.Win)
-
 		fd.SetFilter(storage.NewExtensionFileFilter([]string{".txt"})) //打开的文件格式类型
 		fd.Show()
 	})
@@ -150,15 +150,13 @@ func (s *ShowInput) ShopExcelContainer() *fyne.Container {
 				return
 			}
 			shopExcelEntry.SetText(reader.URI().Path()) //把读取到的路径显示到输入框中
+			s.ShopExcel = shopExcelEntry.Text
 		}, s.Win)
-
 		fd.SetFilter(storage.NewExtensionFileFilter([]string{".txt"})) //打开的文件格式类型
 		fd.Show()
 	})
-	s.ShopExcel = shopExcelEntry.Text
 	return container.New(layout.NewGridLayout(3), shopExcelLabel, shopExcelEntry, shopExcelButton)
 }
-
 func (s *ShowInput) SkuExcelContainer() *fyne.Container {
 	// sku配置表
 	skuExcelLabel := widget.NewLabel("sku配置表")
@@ -176,13 +174,11 @@ func (s *ShowInput) SkuExcelContainer() *fyne.Container {
 
 			skuExcelEntry.SetText(reader.URI().Path()) //把读取到的路径显示到输入框中
 		}, s.Win)
-
-		fd.SetFilter(storage.NewExtensionFileFilter([]string{".txt"})) //打开的文件格式类型
+		fd.SetFilter(storage.NewExtensionFileFilter([]string{"."})) //打开的文件格式类型
 		fd.Show()
 	})
 	return container.New(layout.NewGridLayout(3), skuExcelLabel, skuExcelEntry, skuExcelButton)
 }
-
 func (s *ShowInput) ModelExcelContainer() *fyne.Container {
 	// 型号对照表
 	modelExcelLabel := widget.NewLabel("型号对照表")
@@ -197,30 +193,32 @@ func (s *ShowInput) ModelExcelContainer() *fyne.Container {
 				log.Println("Cancelled")
 				return
 			}
-
 			modelExcelEntry.SetText(reader.URI().Path()) //把读取到的路径显示到输入框中
 		}, s.Win)
-
 		fd.SetFilter(storage.NewExtensionFileFilter([]string{".txt"})) //打开的文件格式类型
 		fd.Show()
 	})
 	return container.New(layout.NewGridLayout(3), modelExcelLabel, modelExcelEntry, modelExcelButton)
 }
-
-func (s *ShowInput) MainShow(w fyne.Window) {
+func (s *ShowInput) Sheet1Container() *fyne.Container {
 	// 商品表表单
 	shopSheetLabel := widget.NewLabel("商品表表单名")
 	shopSheetEntry := widget.NewEntry()
-	// 型号对照表表单
-	modelSheetLabel := widget.NewLabel("型号对照表表单名")
-	modelSheetEntry := widget.NewEntry()
 	// sku配置表表单
 	skuSheetLabel := widget.NewLabel("sku配置表表单名")
 	skuSheetEntry := widget.NewEntry()
+	return container.New(layout.NewGridLayout(4), shopSheetLabel, shopSheetEntry, skuSheetLabel, skuSheetEntry)
+}
+func (s *ShowInput) Sheet2Container() *fyne.Container {
+	// 型号对照表表单
+	modelSheetLabel := widget.NewLabel("型号对照表表单名")
+	modelSheetEntry := widget.NewEntry()
 	// 属性表表单
 	attrSheetLabel := widget.NewLabel("属性表表单名")
 	attrSheetEntry := widget.NewEntry()
-
+	return container.New(layout.NewGridLayout(4), modelSheetLabel, modelSheetEntry, attrSheetLabel, attrSheetEntry)
+}
+func (s *ShowInput) SelectContainer() *fyne.Container {
 	skuCombTypeLabel := widget.NewLabel("型号对照表组合类型")
 	skuCombTypeOption := []string{"款式+型号"}
 	skuCombTypeSelect := widget.NewSelect(skuCombTypeOption, func(s string) {
@@ -229,6 +227,9 @@ func (s *ShowInput) MainShow(w fyne.Window) {
 	skuSortTypeOption := []string{"型号在前"}
 	skuSortTypeSelect := widget.NewSelect(skuSortTypeOption, func(s string) {
 	})
+	return container.New(layout.NewGridLayout(4), skuCombTypeLabel, skuCombTypeSelect, skuSortTypeLabel, skuSortTypeSelect)
+}
+func (s *ShowInput) CheckContainer() *fyne.Container {
 	skuAutoCode := widget.NewCheck("自动生成sku编码", func(b bool) {
 
 	})
@@ -238,6 +239,9 @@ func (s *ShowInput) MainShow(w fyne.Window) {
 	isOnline := widget.NewCheck("是否上架", func(b bool) {
 
 	})
+	return container.New(layout.NewGridLayout(3), skuAutoCode, isSubmit, isOnline)
+}
+func (s *ShowInput) ButtonContainer() *fyne.Container {
 	checkPic := widget.NewButton("检测图片", func() {
 
 	})
@@ -245,26 +249,30 @@ func (s *ShowInput) MainShow(w fyne.Window) {
 
 	})
 	startUpload := widget.NewButton("开始上传", func() {
-
+		fmt.Println(s.ShopExcel)
 	})
+	return container.New(layout.NewGridLayout(3), checkPic, checkConfig, startUpload)
+}
+func (s *ShowInput) ResultContainer() *fyne.Container {
 	consoleResult := widget.NewMultiLineEntry()
+	return container.New(layout.NewGridLayout(1), consoleResult)
+}
+func (s *ShowInput) MainShow(w fyne.Window) {
+	s.Win = w
 	authInfo := widget.NewLabel("Xwb    ALL Right Reserved")
-
-	content9 := container.New(layout.NewGridLayout(4), shopSheetLabel, shopSheetEntry, skuSheetLabel, skuSheetEntry)
-	content10 := container.New(layout.NewGridLayout(4), modelSheetLabel, modelSheetEntry, attrSheetLabel, attrSheetEntry)
-	content11 := container.New(layout.NewGridLayout(4), skuCombTypeLabel, skuCombTypeSelect, skuSortTypeLabel, skuSortTypeSelect)
-	content12 := container.New(layout.NewGridLayout(3), skuAutoCode, isSubmit, isOnline)
-	content13 := container.New(layout.NewGridLayout(3), checkPic, checkConfig, startUpload)
-	content14 := container.New(layout.NewGridLayout(1), consoleResult)
 	box := container.NewVBox(
 		s.LoginContainer(),
 		s.FreightTmpContainer(),
-		s.ShopExcelContainer(),
+		s.PublicDirContainer(),
 		s.PicKitDirContainer(),
 		s.UploadedPicFileContainer(),
 		s.ShopExcelContainer(),
 		s.SkuExcelContainer(),
-		s.ModelExcelContainer(), content9,
-		content10, content11, content12, content13, content14, authInfo) //控制显示位置顺序
+		s.ModelExcelContainer(),
+		s.Sheet1Container(),
+		s.Sheet2Container(),
+		s.SelectContainer(),
+		s.CheckContainer(),
+		s.ButtonContainer(), s.ResultContainer(), authInfo) //控制显示位置顺序
 	w.SetContent(box)
 }
