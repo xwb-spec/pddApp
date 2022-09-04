@@ -6,6 +6,7 @@ import (
 	"fyne.io/fyne/v2/app"
 	"github.com/flopp/go-findfont"
 	"os"
+	"pddApp/common"
 	"pddApp/yyui"
 	"strings"
 )
@@ -28,9 +29,8 @@ func init() {
 		}
 	}
 }
-
-func main() {
-	err := os.Setenv("FYNE_FONT", "/Users/machao/OptRepo/GolandProjects/awesomeProject/learning-golang/pddApp/simkai.ttf")
+func runWin() {
+	err := os.Setenv("FYNE_FONT", "/Users/xiewenbin/GolandProjects/pddApp/simkai.ttf")
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -55,4 +55,9 @@ func main() {
 	if err != nil {
 		return
 	}
+}
+func main() {
+	ex := common.ExcelGoods{ExcelPath: "/Users/xiewenbin/Downloads/批量上商品app/模板-标题.xlsx", ExcelSheetName: "华为"}
+	ex.GetMe()
+
 }

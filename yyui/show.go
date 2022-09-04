@@ -9,6 +9,7 @@ import (
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/storage"
 	"fyne.io/fyne/v2/widget"
+	"image/color"
 	"log"
 	"pddApp/pinduoduo/client"
 )
@@ -42,7 +43,7 @@ func (s *ShowInput) LoginContainer() *fyne.Container {
 	loginShopIdLabel := widget.NewLabel("店铺id")
 	loginShopIdEntry := widget.NewEntry()
 	loginButton := widget.NewButton("登录", func() { // //回调函数
-		makeQRCode := client.QRCodeArgs{
+		makeQRCode := client.QRCodeRequestParam{
 			Path: "/Users/machao/OptRepo/GolandProjects/awesomeProject/learning-golang/pddApp/qrcode.png",
 		}
 		makeQRCode.MakeQRCode()
@@ -204,18 +205,26 @@ func (s *ShowInput) Sheet1Container() *fyne.Container {
 	// 商品表表单
 	shopSheetLabel := widget.NewLabel("商品表表单名")
 	shopSheetEntry := widget.NewEntry()
+	shopSheetEntry.SetText("苹果")
+	s.ShopSheetName = shopSheetEntry.Text
 	// sku配置表表单
 	skuSheetLabel := widget.NewLabel("sku配置表表单名")
 	skuSheetEntry := widget.NewEntry()
+	skuSheetEntry.SetText("配置")
+	s.SkuSheetName = skuSheetEntry.Text
 	return container.New(layout.NewGridLayout(4), shopSheetLabel, shopSheetEntry, skuSheetLabel, skuSheetEntry)
 }
 func (s *ShowInput) Sheet2Container() *fyne.Container {
 	// 型号对照表表单
 	modelSheetLabel := widget.NewLabel("型号对照表表单名")
 	modelSheetEntry := widget.NewEntry()
+	modelSheetEntry.SetText("型号")
+	s.ModelSheetName = modelSheetEntry.Text
 	// 属性表表单
 	attrSheetLabel := widget.NewLabel("属性表表单名")
 	attrSheetEntry := widget.NewEntry()
+	attrSheetEntry.SetText("属性")
+	s.AttrSheetName = attrSheetEntry.Text
 	return container.New(layout.NewGridLayout(4), modelSheetLabel, modelSheetEntry, attrSheetLabel, attrSheetEntry)
 }
 func (s *ShowInput) SelectContainer() *fyne.Container {
@@ -254,12 +263,15 @@ func (s *ShowInput) ButtonContainer() *fyne.Container {
 	return container.New(layout.NewGridLayout(3), checkPic, checkConfig, startUpload)
 }
 func (s *ShowInput) ResultContainer() *fyne.Container {
+
 	consoleResult := widget.NewMultiLineEntry()
-	return container.New(layout.NewGridLayout(1), consoleResult)
+	consoleResult.Resize(fyne.Size{Width: 5000.0, Height: 5000.0})
+	return container.New(layout.NewVBoxLayout(), consoleResult)
 }
 func (s *ShowInput) MainShow(w fyne.Window) {
 	s.Win = w
-	authInfo := widget.NewLabel("Xwb    ALL Right Reserved")
+	text := canvas.NewText("Xwb    ALL Right Reserved", color.Black)
+	authInfo := container.New(layout.NewCenterLayout(), text)
 	box := container.NewVBox(
 		s.LoginContainer(),
 		s.FreightTmpContainer(),
