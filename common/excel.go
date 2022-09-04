@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// 装载excel数据
 type ExcelGoods struct {
 	ExcelPath      string
 	ExcelSheetName string
@@ -16,9 +17,9 @@ type ExcelGoods struct {
 	IsLowPrice     []string // 是否低价
 	IsOnline       []string // 是否已上架
 	SkuDisplay     []string // sku显示
-	//SkuModel []string // sku型号名
-	PictureDir []string // 对应的图片型号文件夹名称
-	Brand      []string // 品牌
+	//SkuModel []string // sku型号名 //
+	//PictureDir []string // 对应的图片型号文件夹名称
+	//Brand      []string // 品牌
 }
 
 type ModelPictureComparison struct {
@@ -62,7 +63,6 @@ func (e *ExcelGoods) GetMe() {
 		return
 	}
 	ex2 := ModelPictureComparison{ExcelPath: "/Users/xiewenbin/Downloads/批量上商品app/模板-型号图片对照表.xlsx", ExcelSheetName: "直边tpu"}
-	PicData := ex2.GetMe()
 	mapData := make(map[string][][]string)
 	var key string
 	for _, row := range rows[1:] {
@@ -90,15 +90,15 @@ func (e *ExcelGoods) GetMe() {
 			if col1 != "" {
 				Good.Model = append(Good.Model, col1)
 				// 查找图片
-				v, ok := PicData[col1]
-				if ok {
-					Good.PictureDir = append(Good.PictureDir, v[0])
-					Good.Brand = append(Good.Brand, v[1])
-				} else {
-					log.Printf("型号 [%s] 没有图片信息\n", col1)
-					Good.PictureDir = append(Good.PictureDir, "")
-					Good.Brand = append(Good.Brand, "")
-				}
+				//v, ok := PicData[col1]
+				//if ok {
+				//	Good.PictureDir = append(Good.PictureDir, v[0])
+				//	Good.Brand = append(Good.Brand, v[1])
+				//} else {
+				//	log.Printf("型号 [%s] 没有图片信息\n", col1)
+				//	Good.PictureDir = append(Good.PictureDir, "")
+				//	Good.Brand = append(Good.Brand, "")
+				//}
 			}
 			if col2 != "" {
 				Good.BrandPrefix = append(Good.BrandPrefix, col2)
