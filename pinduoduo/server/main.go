@@ -3,18 +3,18 @@ package server
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
-	"pddApp/pinduoduo/client"
 )
 
 func main() {
 	r := gin.Default()
 	r.GET("/api/v1/callback/", func(c *gin.Context) {
 		if code, ok := c.GetQuery("code"); ok {
-			Save(client.ReturnCodeResponse{
+			Save(ReturnCodeResponse{
 				Code:  code,
 				State: "xwb",
 			})
 			c.String(200, "callback code ok")
+			return
 		}
 		c.String(400, "callback code failed")
 	})
@@ -26,5 +26,5 @@ func main() {
 		}
 		c.JSON(200, jsonData)
 	})
-	r.Run("8088")
+	r.Run("0.0.0.0:8088")
 }

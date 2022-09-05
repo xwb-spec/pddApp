@@ -23,7 +23,7 @@ type GoodsPropertiesRequestParam struct {
 
 // 商品添加参数
 type GoodsAddRequestParam struct {
-	CommonRequestParam
+	//CommonRequestParam
 	CarouselGallery     []string                      `json:"carousel_gallery"`      // 商品轮播图，按次序上传
 	CatId               int64                         `json:"cat_id"`                // 叶子类目ID
 	CostTemplateId      int64                         `json:"cost_template_id"`      // 物流运费模板ID，可使用pdd.goods.logistics.template.get获取

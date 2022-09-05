@@ -5,12 +5,16 @@ import (
 	"fmt"
 	"github.com/go-redis/redis"
 	"log"
-	"pddApp/pinduoduo/client"
 )
 
 var (
 	rdb *redis.Client
 )
+
+type ReturnCodeResponse struct {
+	Code  string `json:"code"`  // 返回code
+	State string `json:"state"` // 状态
+}
 
 // 初始化连接
 func initClient() (err error) {
@@ -25,7 +29,7 @@ func initClient() (err error) {
 	return err
 }
 
-func Save(d client.ReturnCodeResponse) {
+func Save(d ReturnCodeResponse) {
 	if err := initClient(); err != nil {
 		return
 	}
@@ -36,7 +40,7 @@ func Save(d client.ReturnCodeResponse) {
 	}
 }
 
-func GetVal() client.ReturnCodeResponse {
+func GetVal() ReturnCodeResponse {
 	if err := initClient(); err != nil {
 		log.Println("redis get error")
 	}
@@ -44,7 +48,7 @@ func GetVal() client.ReturnCodeResponse {
 	if err != nil {
 		panic(err)
 	}
-	var v client.ReturnCodeResponse
+	var v ReturnCodeResponse
 	if err == redis.Nil {
 		fmt.Println("ReturnCodeResponse does not exist")
 	} else if err != nil {

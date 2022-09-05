@@ -5,8 +5,8 @@ ATDIR := $(shell pwd)
 export PATH := $(GOBIN):$(PATH)
 
 build-linux:
-	GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o  -o bin/yy ./
+	GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o bin/yy ./
 build-macos:
-	go build -ldflags="-w -s" -o  -o bin/yy ./
+	go build -ldflags="-w -s" -o bin/yy ./
 build-windows:
     GOOS=windows GOARCH=amd64 go build -ldflags="-w -s" -o bin/yy.exe ./
