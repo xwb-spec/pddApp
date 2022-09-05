@@ -22,12 +22,12 @@ type ExcelGoods struct {
 	//Brand      []string // 品牌
 }
 
-type ModelPictureComparison struct {
+type ExcelModelPictureComparison struct {
 	ExcelPath      string
 	ExcelSheetName string
 }
 
-func (e *ModelPictureComparison) GetMe() map[string][]string {
+func (e *ExcelModelPictureComparison) GetMe() map[string][]string {
 	f, err := excelize.OpenFile(e.ExcelPath)
 	if err != nil {
 		log.Println(err)
@@ -62,7 +62,7 @@ func (e *ExcelGoods) GetMe() {
 		log.Println(err)
 		return
 	}
-	ex2 := ModelPictureComparison{ExcelPath: "/Users/xiewenbin/Downloads/批量上商品app/模板-型号图片对照表.xlsx", ExcelSheetName: "直边tpu"}
+	//ex2 := ModelPictureComparison{ExcelPath: "/Users/xiewenbin/Downloads/批量上商品app/模板-型号图片对照表.xlsx", ExcelSheetName: "直边tpu"}
 	mapData := make(map[string][][]string)
 	var key string
 	for _, row := range rows[1:] {

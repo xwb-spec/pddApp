@@ -6,7 +6,7 @@ import (
 	"fyne.io/fyne/v2/app"
 	"github.com/flopp/go-findfont"
 	"os"
-	"pddApp/common"
+	"pddApp/pinduoduo/client"
 	"pddApp/yyui"
 	"strings"
 )
@@ -57,7 +57,9 @@ func runWin() {
 	}
 }
 func main() {
-	ex := common.ExcelGoods{ExcelPath: "/Users/xiewenbin/Downloads/批量上商品app/模板-标题.xlsx", ExcelSheetName: "华为"}
-	ex.GetMe()
+	//ex := common.ExcelGoods{ExcelPath: "/Users/xiewenbin/Downloads/批量上商品app/模板-标题.xlsx", ExcelSheetName: "华为"}
+	//ex.GetMe()
+	jsonData := `{"a":"b", "c": [{"5":1}]}`
+	client.CreateSign(jsonData)
 
 }
