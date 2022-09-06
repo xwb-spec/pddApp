@@ -1,7 +1,6 @@
 package server
 
 import (
-	"encoding/json"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,11 +19,7 @@ func main() {
 	})
 	r.POST("/api/v1/callback/", func(c *gin.Context) {
 		d := GetVal()
-		jsonData, err := json.Marshal(&d)
-		if err != nil {
-			c.JSON(500, "服务器错误")
-		}
-		c.JSON(200, jsonData)
+		c.JSON(200, d)
 	})
 	r.Run("0.0.0.0:8088")
 }

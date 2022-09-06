@@ -41,11 +41,3 @@ type GoodsAddRequestParam struct {
 	GoodsProperties     []GoodsPropertiesRequestParam `json:"goods_properties"`      // 商品属性
 	SkuList             []SkuRequestParam             `json:"sku_list"`              // sku对象列表
 }
-type GoodsAddResponse struct {
-	GoodsCommitId int `json:"goods_commit_id"`
-	GoodsId       int `json:"goods_id"`
-	MatchedSpuId  int `json:"matched_spu_id"`
-}
-type GoodsResultResponse struct {
-	GoodsAddResponse GoodsAddResponse `json:"goods_add_response"`
-}

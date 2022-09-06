@@ -6,7 +6,6 @@ package client
 //}
 //type ImgUploadResponse struct {
 //	GoodsImgUploadResponse GoodsImgUploadResponse `json:"goods_img_upload_response"`
-//	ErrorResultResponse
 //}
 //
 //type GoodsImgUploadResponse struct {

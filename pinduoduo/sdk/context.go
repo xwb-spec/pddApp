@@ -7,11 +7,11 @@ type Context struct {
 	Debug        bool
 }
 
-func NewContext() *Context {
+func NewContext(cfg *Config) *Context {
 	return &Context{
-		ClientId:     "cfg.ClientId",
-		ClientSecret: "cfg.ClientSecret",
-		RetryTimes:   3,
-		Debug:        true,
+		ClientId:     cfg.ClientId,
+		ClientSecret: cfg.ClientSecret,
+		RetryTimes:   cfg.RetryTimes,
+		Debug:        cfg.Debug,
 	}
 }

@@ -30,19 +30,20 @@ type QRCodeRequestParam struct {
 	State       string
 	Path        string
 }
-type PopAuthTokenCreateResponse struct {
-	AccessToken           string `json:"access_token"`
-	ExpiresAt             string `json:"expires_at"`
-	ExpiresIn             string `json:"expires_in"`
-	OwnerId               string `json:"owner_id"`
-	OwnerName             string `json:"owner_name"`
-	RefreshToken          string `json:"refresh_token"`
-	RefreshTokenExpiresAt string `json:"refresh_token_expires_at"`
-	RefreshTokenExpiresIn string `json:"refresh_token_expires_in"`
-}
-type TokenResponse struct {
-	PopAuthTokenCreateResponse PopAuthTokenCreateResponse `json:"pop_auth_token_create_response"`
-}
+
+//type PopAuthTokenCreateResponse struct {
+//	AccessToken           string `json:"access_token"`
+//	ExpiresAt             string `json:"expires_at"`
+//	ExpiresIn             string `json:"expires_in"`
+//	OwnerId               string `json:"owner_id"`
+//	OwnerName             string `json:"owner_name"`
+//	RefreshToken          string `json:"refresh_token"`
+//	RefreshTokenExpiresAt string `json:"refresh_token_expires_at"`
+//	RefreshTokenExpiresIn string `json:"refresh_token_expires_in"`
+//}
+//type TokenResponse struct {
+//	PopAuthTokenCreateResponse PopAuthTokenCreateResponse `json:"pop_auth_token_create_response"`
+//}
 
 //type ErrorResponse struct {
 //	ErrorMsg  string `json:"error_msg"`
@@ -58,14 +59,6 @@ type TokenResponse struct {
 type ReturnCodeResponse struct {
 	Code  string `json:"code"`  // 返回code
 	State string `json:"state"` // 状态
-}
-
-type TokenAPI struct {
-	Context *sdk.Context
-}
-
-func NewTokenAPI() *TokenAPI {
-	return &TokenAPI{Context: sdk.NewContext()}
 }
 
 // 生成授权码,商家APP扫码授权
@@ -94,19 +87,22 @@ func GetReturnCode() (ret ReturnCodeResponse, err error) {
 }
 
 // 获取token
-func (g *TokenAPI) GetToken() (tok TokenResponse, err error) {
-	NewTokenAPI()
+func GetToken() string {
+	p := sdk.NewPdd(&sdk.Config{
+		ClientId:     "your client id",
+		ClientSecret: "your client secret",
+		RetryTimes:   3, // 设置接口调用失败重试次数
+	})
 	code, err := GetReturnCode()
 	if err != nil {
 		log.Println(err)
 	}
 	params := sdk.NewParamsWithType("pdd.pop.auth.token.create")
 	params.Set("code", code)
-	r, err := sdk.Call(g.Context, params)
+	s := p.GetTokenAPI()
+	t, err := s.TokenGet(code.Code)
 	if err != nil {
-		return
+		log.Println("获取token失败")
 	}
-	bytes, err := sdk.GetResponseBytes(r)
-	json.Unmarshal(bytes, &tok)
-	return
+	return t.PopAuthTokenCreateResponse.AccessToken
 }
