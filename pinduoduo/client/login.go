@@ -104,5 +104,5 @@ func GetToken() string {
 	if err != nil {
 		log.Println("获取token失败")
 	}
-	return t.PopAuthTokenCreateResponse.AccessToken
+	return t.AccessToken
 }

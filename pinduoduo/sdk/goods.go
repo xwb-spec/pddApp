@@ -47,24 +47,50 @@ func (p *Pdd) LogisticsTemplateListGet(page, pageSize int) (res *GoodsLogisticsT
 	return
 }
 
-// 获取商品分类
+// 获取当前店铺可发布商品类目id
 type Category struct {
-	Level       int    `json:"level"`  // 层级，1-一级，2-二级，3-三级，4-四级
-	CatId       int    `json:"cat_id"` //
-	ParentCatId int    `json:"parent_cat_id"`
-	CatName     string `json:"cat_name"`
+	CatId   int    `json:"cat_id"` //
+	Leaf    bool   `json:"leaf"`   // 是否为叶子类目
+	CatName string `json:"cat_name"`
 }
 
-func (g *GoodsAPI) GoodsCatGet(parentCatId int) (res []*Category, err error) {
+func (g *GoodsAPI) GoodsAuthorizationCatGet(parentCatId int) (res []*Category, err error) {
 	params := NewParamsWithType("pdd.goods.cats.get")
 	params.Set("parent_cat_id", parentCatId)
 	r, err := Call(g.Context, params)
 	if err != nil {
 		return
 	}
-	bytes, err := GetResponseBytes(r, "goods_cats_get_response", "goods_cats_list")
+	bytes, err := GetResponseBytes(r, "goods_auth_cats_get_response", "goods_cats_list")
 	json.Unmarshal(bytes, &res)
 	return
+}
+
+var a []int
+
+func (g *GoodsAPI) find(res []*Category) []*Category {
+	for _, r := range res {
+		if r.Leaf {
+			a = append(a, r.CatId)
+			break
+		} else {
+			return g.find(res)
+		}
+	}
+}
+func (g *GoodsAPI) GoodsAuthorizationCatGetId() (id int, err error) {
+	i := 0 // 父级
+
+	res, err := g.GoodsAuthorizationCatGet(i)
+	for _, r := range res {
+		if r.Leaf {
+			a = append(a, r.CatId)
+			break
+		} else {
+			res, err := g.GoodsAuthorizationCatGet(r.CatId)
+
+		}
+	}
 }
 
 // End 获取商品分类

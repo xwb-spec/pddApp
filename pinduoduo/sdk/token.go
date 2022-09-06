@@ -26,11 +26,12 @@ type PopAuthTokenCreateResponse struct {
 	RefreshTokenExpiresAt string `json:"refresh_token_expires_at"`
 	RefreshTokenExpiresIn string `json:"refresh_token_expires_in"`
 }
-type TokenResponse struct {
-	PopAuthTokenCreateResponse PopAuthTokenCreateResponse `json:"pop_auth_token_create_response"`
-}
 
-func (g *TokenAPI) TokenGet(code string) (res *TokenResponse, err error) {
+//type TokenResponse struct {
+//	PopAuthTokenCreateResponse PopAuthTokenCreateResponse `json:"pop_auth_token_create_response"`
+//}
+
+func (g *TokenAPI) TokenGet(code string) (res *PopAuthTokenCreateResponse, err error) {
 	params := NewParamsWithType("pdd.pop.auth.token.create")
 	params.Set("code", code)
 
@@ -38,7 +39,7 @@ func (g *TokenAPI) TokenGet(code string) (res *TokenResponse, err error) {
 	if err != nil {
 		return
 	}
-	bytes, err := GetResponseBytes(r)
+	bytes, err := GetResponseBytes(r, "pop_auth_token_create_response")
 	json.Unmarshal(bytes, &res)
 	return
 }
