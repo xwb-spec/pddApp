@@ -9,8 +9,8 @@ import (
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/storage"
 	"fyne.io/fyne/v2/widget"
-	"image/color"
 	"log"
+	"pddApp/common"
 	"pddApp/pinduoduo/client"
 )
 
@@ -34,6 +34,7 @@ type ShowInput struct {
 	SkuAutoCode         bool   // 自动生成sku编码
 	IsSubmit            bool   // 是否提交
 	IsOnline            bool   // 是否上架
+	ConsoleResult       *widget.Entry
 }
 
 func (s *ShowInput) LoginContainer() *fyne.Container {
@@ -108,6 +109,7 @@ func (s *ShowInput) PublicDirContainer() *fyne.Container {
 			}
 			//设置输入框内容
 			publicDirEntry.SetText(list.Path())
+			s.PubFileDir = publicDirEntry.Text
 		}, s.Win)
 	})
 	return container.New(layout.NewGridLayout(3), publicDirLabel, publicDirEntry, publicDirButton)
@@ -252,6 +254,47 @@ func (s *ShowInput) CheckContainer() *fyne.Container {
 }
 func (s *ShowInput) ButtonContainer() *fyne.Container {
 	checkPic := widget.NewButton("检测图片", func() {
+		resultConsole := s.ConsoleResult.Text + "\n"
+		// 检测公用图片
+		if s.PubFileDir == "" {
+			s.ConsoleResult.SetText(resultConsole + "检测图片失败: [ERROR] 请选择或输入公用文件目录" + s.PubFileDir)
+			return
+		}
+		isPathExist, err := common.IsPathExists(s.PubFileDir)
+		if err != nil {
+			s.ConsoleResult.SetText(resultConsole + "检测图片失败: [ERROR]: %s" + err.Error())
+			return
+		}
+		if !isPathExist {
+			s.ConsoleResult.SetText(resultConsole + "检测图片失败: [ERROR] 公用文件目录不存在" + s.PubFileDir)
+			return
+		}
+		pubFilePaths := []string{s.PubFileDir + "/首页.png", s.PubFileDir + "/尾页.jpg"}
+		for _, f := range pubFilePaths {
+			isPathExist, err := common.IsPathExists(f)
+			if err != nil {
+				s.ConsoleResult.SetText(resultConsole + "检测图片失败: [ERROR]: %s" + err.Error())
+				return
+			}
+			if !isPathExist {
+				s.ConsoleResult.SetText(resultConsole + "检测图片失败: [ERROR] 公用文件图片不存在" + f)
+				return
+			}
+		}
+		// 检测主图、详情图、sku图
+		if s.PicKitDir == "" {
+			s.ConsoleResult.SetText(resultConsole + "检测图片失败: [ERROR] 请选择或输入套图文件目录" + s.PicKitDir)
+			return
+		}
+		isPathExist, err = common.IsPathExists(s.PicKitDir)
+		if err != nil {
+			s.ConsoleResult.SetText(resultConsole + "检测图片失败: [ERROR]: %s" + err.Error())
+			return
+		}
+		if !isPathExist {
+			s.ConsoleResult.SetText(resultConsole + "检测图片失败: [ERROR] 套图文件目录不存在" + s.PicKitDir)
+			return
+		}
 
 	})
 	checkConfig := widget.NewButton("检测配置", func() {
@@ -263,15 +306,13 @@ func (s *ShowInput) ButtonContainer() *fyne.Container {
 	return container.New(layout.NewGridLayout(3), checkPic, checkConfig, startUpload)
 }
 func (s *ShowInput) ResultContainer() *fyne.Container {
-
-	consoleResult := widget.NewMultiLineEntry()
-	consoleResult.Resize(fyne.Size{Width: 5000.0, Height: 5000.0})
-	return container.New(layout.NewVBoxLayout(), consoleResult)
+	s.ConsoleResult = widget.NewMultiLineEntry()
+	s.ConsoleResult.Resize(fyne.NewSize(790, 250))
+	s.ConsoleResult.SetText(s.ConsoleResult.Text)
+	return container.NewWithoutLayout(s.ConsoleResult)
 }
 func (s *ShowInput) MainShow(w fyne.Window) {
 	s.Win = w
-	text := canvas.NewText("Xwb    ALL Right Reserved", color.Black)
-	authInfo := container.New(layout.NewCenterLayout(), text)
 	box := container.NewVBox(
 		s.LoginContainer(),
 		s.FreightTmpContainer(),
@@ -285,6 +326,7 @@ func (s *ShowInput) MainShow(w fyne.Window) {
 		s.Sheet2Container(),
 		s.SelectContainer(),
 		s.CheckContainer(),
-		s.ButtonContainer(), s.ResultContainer(), authInfo) //控制显示位置顺序
+		s.ButtonContainer(), s.ResultContainer(),
+	) //控制显示位置顺序
 	w.SetContent(box)
 }

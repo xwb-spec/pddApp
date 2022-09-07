@@ -66,32 +66,33 @@ func (g *GoodsAPI) GoodsAuthorizationCatGet(parentCatId int) (res []*Category, e
 	return
 }
 
-var a []int
-
-func (g *GoodsAPI) find(res []*Category) []*Category {
-	for _, r := range res {
-		if r.Leaf {
-			a = append(a, r.CatId)
-			break
-		} else {
-			return g.find(res)
-		}
-	}
-}
-func (g *GoodsAPI) GoodsAuthorizationCatGetId() (id int, err error) {
-	i := 0 // 父级
-
-	res, err := g.GoodsAuthorizationCatGet(i)
-	for _, r := range res {
-		if r.Leaf {
-			a = append(a, r.CatId)
-			break
-		} else {
-			res, err := g.GoodsAuthorizationCatGet(r.CatId)
-
-		}
-	}
-}
+//
+//var a []int
+//
+//func (g *GoodsAPI) find(res []*Category) []*Category {
+//	for _, r := range res {
+//		if r.Leaf {
+//			a = append(a, r.CatId)
+//			break
+//		} else {
+//			return g.find(res)
+//		}
+//	}
+//}
+//func (g *GoodsAPI) GoodsAuthorizationCatGetId() (id int, err error) {
+//	i := 0 // 父级
+//
+//	res, err := g.GoodsAuthorizationCatGet(i)
+//	for _, r := range res {
+//		if r.Leaf {
+//			a = append(a, r.CatId)
+//			break
+//		} else {
+//			res, err := g.GoodsAuthorizationCatGet(r.CatId)
+//
+//		}
+//	}
+//}
 
 // End 获取商品分类
 type CatRuleGetResponse struct {
