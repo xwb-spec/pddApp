@@ -1,7 +1,22 @@
 package yyui
 
-import "pddApp/common"
+import (
+	"github.com/xuri/excelize/v2"
+	"pddApp/common"
+)
 
+func CheckExcelSheet(excelPath, sheetName string) bool {
+	f, err := excelize.OpenFile(excelPath)
+	if err != nil {
+		return false
+	}
+	defer f.Close()
+	_, err = f.GetRows(sheetName)
+	if err != nil {
+		return false
+	}
+	return true
+}
 func (s *ShowInput) CheckInput() {
 	resultConsole := s.ConsoleResult.Text + "\n"
 	// 检测登录信息
@@ -105,9 +120,32 @@ func (s *ShowInput) CheckInput() {
 	// 检测表单
 	if s.ShopSheetName == "" {
 		s.ConsoleResult.SetText(resultConsole + "商品配置表表单为空: [ERROR] 请填写")
+		return
+	} else {
+		if !CheckExcelSheet(s.ShopExcel, s.ShopSheetName) {
+			s.ConsoleResult.SetText(resultConsole + "商品配置表表单不存在: [ERROR] 请检查商品表单")
+			return
+		}
 	}
 	if s.ModelSheetName == "" {
 		s.ConsoleResult.SetText(resultConsole + "型号对照表表单为空: [ERROR] 请填写")
+		if !CheckExcelSheet(s.ModelExcel, s.ModelSheetName) {
+			s.ConsoleResult.SetText(resultConsole + "型号对照表表单不存在: [ERROR] 请检查型号对照表表单")
+			return
+		}
 	}
-
+	if s.SkuSheetName == "" {
+		s.ConsoleResult.SetText(resultConsole + "sku配置表表单为空: [ERROR] 请填写")
+		if !CheckExcelSheet(s.SkuExcel, s.SkuSheetName) {
+			s.ConsoleResult.SetText(resultConsole + "sku配置表表单不存在: [ERROR] 请检查sku配置表表单")
+			return
+		}
+	}
+	if s.AttrSheetName == "" {
+		s.ConsoleResult.SetText(resultConsole + "属性配置表表单为空: [ERROR] 请填写")
+		if !CheckExcelSheet(s.SkuSheetName, s.AttrSheetName) {
+			s.ConsoleResult.SetText(resultConsole + "属性配置表表单不存在: [ERROR] 请检查属性配置表表单")
+			return
+		}
+	}
 }

@@ -256,19 +256,7 @@ func (s *ShowInput) ButtonContainer() *fyne.Container {
 	checkPic := widget.NewButton("检测图片", func() {
 		resultConsole := s.ConsoleResult.Text + "\n"
 		// 检测公用图片
-		if s.PubFileDir == "" {
-			s.ConsoleResult.SetText(resultConsole + "检测图片失败: [ERROR] 请选择或输入公用文件目录" + s.PubFileDir)
-			return
-		}
-		isPathExist, err := common.IsPathExists(s.PubFileDir)
-		if err != nil {
-			s.ConsoleResult.SetText(resultConsole + "检测图片失败: [ERROR]: %s" + err.Error())
-			return
-		}
-		if !isPathExist {
-			s.ConsoleResult.SetText(resultConsole + "检测图片失败: [ERROR] 公用文件目录不存在" + s.PubFileDir)
-			return
-		}
+		s.CheckInput()
 		pubFilePaths := []string{s.PubFileDir + "/首页.png", s.PubFileDir + "/尾页.jpg"}
 		for _, f := range pubFilePaths {
 			isPathExist, err := common.IsPathExists(f)
@@ -282,24 +270,7 @@ func (s *ShowInput) ButtonContainer() *fyne.Container {
 			}
 		}
 		// 检测主图、详情图、sku图
-		if s.PicKitDir == "" {
-			s.ConsoleResult.SetText(resultConsole + "检测图片失败: [ERROR] 请选择或输入套图文件目录" + s.PicKitDir)
-			return
-		}
-		isPathExist, err = common.IsPathExists(s.PicKitDir)
-		if err != nil {
-			s.ConsoleResult.SetText(resultConsole + "检测图片失败: [ERROR]: %s" + err.Error())
-			return
-		}
-		if !isPathExist {
-			s.ConsoleResult.SetText(resultConsole + "检测图片失败: [ERROR] 套图文件目录不存在" + s.PicKitDir)
-			return
-		}
-		isPathExist, err = common.IsPathExists(s.ShopExcel)
-		if err != nil {
-			s.ConsoleResult.SetText(resultConsole + "检测图片失败: [ERROR]: %s" + err.Error())
-			return
-		}
+
 	})
 	checkConfig := widget.NewButton("检测配置", func() {
 
