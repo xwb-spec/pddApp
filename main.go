@@ -43,6 +43,7 @@ func runWin() {
 	w := a.NewWindow("YY批量上链接V1.0   Xwb ALL Right Reserved QQ:543361609")
 	//主界面框架布局
 	s.MainShow(w)
+	s.GetInput() // 初始化对话框数据
 	//尺寸
 	w.Resize(fyne.Size{Width: 800, Height: 800})
 	//w居中显示
