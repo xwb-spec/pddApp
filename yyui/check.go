@@ -1,9 +1,12 @@
 package yyui
 
 import (
+	"errors"
+	"fmt"
 	"github.com/xuri/excelize/v2"
 	"log"
 	"pddApp/common"
+	"strings"
 )
 
 func CheckExcelSheet(excelPath, sheetName string) bool {
@@ -132,13 +135,18 @@ func (s *ShowInput) CheckInput() {
 	}
 	if s.ModelSheetName.Text == "" {
 		s.ConsoleResult.SetText(resultConsole + "型号对照表表单为空: [ERROR] 请填写")
+		return
+	} else {
 		if !CheckExcelSheet(s.ModelExcel.Text, s.ModelSheetName.Text) {
+			log.Println("型号有没有走这里")
 			s.ConsoleResult.SetText(resultConsole + "型号对照表表单不存在: [ERROR] 请检查型号对照表表单")
 			return
 		}
 	}
 	if s.SkuSheetName.Text == "" {
 		s.ConsoleResult.SetText(resultConsole + "sku配置表表单为空: [ERROR] 请填写")
+		return
+	} else {
 		if !CheckExcelSheet(s.SkuExcel.Text, s.SkuSheetName.Text) {
 			s.ConsoleResult.SetText(resultConsole + "sku配置表表单不存在: [ERROR] 请检查sku配置表表单")
 			return
@@ -146,15 +154,80 @@ func (s *ShowInput) CheckInput() {
 	}
 	if s.AttrSheetName.Text == "" {
 		s.ConsoleResult.SetText(resultConsole + "属性配置表表单为空: [ERROR] 请填写")
-		if !CheckExcelSheet(s.SkuSheetName.Text, s.AttrSheetName.Text) {
+		return
+	} else {
+		if !CheckExcelSheet(s.SkuExcel.Text, s.AttrSheetName.Text) {
 			s.ConsoleResult.SetText(resultConsole + "属性配置表表单不存在: [ERROR] 请检查属性配置表表单")
 			return
 		}
 	}
-	s.CheckPic()
+	s.CheckPubImagePath()
+	errs := s.CheckImagePath()
+	for _, err := range errs {
+		s.ConsoleResult.SetText(resultConsole + err.Error())
+	}
+	s.ConsoleResult.SetText(resultConsole + "检测成功")
+	return
 }
 
-func (s *ShowInput) CheckPic() {
+// 检查套图
+func (s *ShowInput) CheckImagePath() (errs []error) {
+	modelRows := common.GetExcel(s.ShopExcel.Text, s.ShopSheetName.Text)
+	var modelList []string
+	for i, row := range modelRows {
+		if i > 0 && len(row) != 0 {
+			modelName := strings.Trim(row[1], " ")
+			if modelName != "" {
+				if !common.IsEleExistsSlice(modelName, modelList) {
+					modelList = append(modelList, modelName)
+				}
+			}
+		}
+	}
+	compMap := common.GetComp(s.ModelExcel.Text, s.ModelSheetName.Text)
+	g := common.GoodsConfig{}
+	g.GetConfig(s.SkuExcel.Text, s.SkuSheetName.Text)
+	for _, m := range modelList {
+		val, ok := compMap[m] // 从map查找图片目录是否存在
+		if !ok {
+			errs = append(errs, errors.New(fmt.Sprintf("型号[%s]对应的图片目录没有找到", m)))
+		} else {
+			imageDir := s.PicKitDir.Text + "/" + *val.PicDir
+			for _, d := range g.DetailGalleryConfigList { // 检查详情图是否完全
+				if !d.IsPublic { // 不是处理公用图
+					imagePath := imageDir + "/" + d.FileName + ".jpg"
+					b, _ := common.IsPathExists(imagePath)
+					if !b {
+						errs = append(errs, errors.New(fmt.Sprintf("详情图[%s]没有找到", imagePath)))
+					}
+				}
+			}
+			for _, d := range g.SkuConfigList { // 检查详情图是否完全
+				if !d.IsPublic {
+					imagePath := imageDir + "/" + d.FileName + ".jpg"
+					b, _ := common.IsPathExists(imagePath)
+					if !b {
+						errs = append(errs, errors.New(fmt.Sprintf("sku图[%s]没有找到", imagePath)))
+					}
+				}
+			}
+			for _, d := range g.CarouselGalleryConfigList { // 检查详情图是否完全
+				if !d.IsPublic {
+					imagePath := imageDir + "/" + d.FileName + ".jpg"
+					b, _ := common.IsPathExists(imagePath)
+					if !b {
+						errs = append(errs, errors.New(fmt.Sprintf("轮播图[%s]没有找到", imagePath)))
+					}
+				}
+			}
+		}
+
+	}
+	return
+}
+
+// 检查公用图片
+func (s *ShowInput) CheckPubImagePath() {
 	resultConsole := s.ConsoleResult.Text + "\n"
 	pubFilePaths := []string{s.PubFileDir.Text + "/首页.png", s.PubFileDir.Text + "/尾页.jpg"}
 	for _, f := range pubFilePaths {
@@ -168,4 +241,7 @@ func (s *ShowInput) CheckPic() {
 			return
 		}
 	}
+	// 检测套图
 }
+
+// 检查配置

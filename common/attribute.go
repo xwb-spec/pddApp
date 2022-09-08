@@ -16,20 +16,28 @@ type GoodsProperties struct {
 	ProtectiveCoverTexture string   //保护套质地
 }
 
-func (g *GoodsProperties) ReadConfig() (goodProperties GoodsProperties) {
+func (g *GoodsProperties) GetExcel() *excelize.File {
 	f, err := excelize.OpenFile(g.ExcelPath)
 	if err != nil {
-		log.Println(err)
-		return
+		log.Fatal(err)
 	}
+	return f
+}
+
+func (g *GoodsProperties) GetRows() [][]string {
+	f := g.GetExcel()
 	defer f.Close()
 	rows, err := f.GetRows(g.ExcelSheetName)
 	if err != nil {
-		log.Println(err)
-		return
+		log.Fatal(err)
 	}
+	return rows
+}
+
+func (g *GoodsProperties) GetAttr() (goodProperties GoodsProperties) {
+	rows := g.GetRows()
 	for i, row := range rows {
-		if i > 0 {
+		if i > 0 && len(row) != 0 {
 			if i == 1 {
 				goodProperties.Brand = strings.Trim(row[0], " ")
 				goodProperties.Shape = strings.Trim(row[1], " ")

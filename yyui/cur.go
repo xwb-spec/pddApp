@@ -38,7 +38,7 @@ func (s *ShowInput) SaveInput() {
 		ShopExcel:           s.ShopExcel.Text,
 		SkuExcel:            s.SkuExcel.Text,
 		ModelExcel:          s.ModelExcel.Text,
-		ShopSheetName:       s.SkuSheetName.Text,
+		ShopSheetName:       s.ShopSheetName.Text,
 		SkuSheetName:        s.SkuSheetName.Text,
 		ModelSheetName:      s.ModelSheetName.Text,
 		AttrSheetName:       s.AttrSheetName.Text,

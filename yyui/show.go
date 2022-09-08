@@ -192,7 +192,7 @@ func (s *ShowInput) ModelExcelContainer() *fyne.Container {
 			}
 			s.ModelExcel.SetText(reader.URI().Path()) //把读取到的路径显示到输入框中
 		}, s.Win)
-		fd.SetFilter(storage.NewExtensionFileFilter([]string{".txt"})) //打开的文件格式类型
+		fd.SetFilter(storage.NewExtensionFileFilter([]string{".xlsx"})) //打开的文件格式类型
 		fd.Show()
 	})
 	return container.New(layout.NewGridLayout(3), modelExcelLabel, s.ModelExcel, modelExcelButton)

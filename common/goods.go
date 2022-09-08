@@ -6,6 +6,10 @@ import (
 	"strings"
 )
 
+type ExcelConfig struct {
+	ExcelPath      string
+	ExcelSheetName string
+}
 type GoodsInfo struct {
 	Model       string // 型号
 	BrandPrefix string //品牌前缀
@@ -16,31 +20,28 @@ type GoodsInfo struct {
 
 // 装载商品数据
 type Goods struct {
-	GoodsExcelPath      string
-	GoodsExcelSheetName string
-	//GoodsConfigExcelPath          string
-	//GoodsConfigExcelSheetName     string
-	//GoodsComparisonExcelPath      string
-	//GoodsComparisonExcelSheetName string
 	GoodsMap map[string][]*GoodsInfo
 }
 
-func (g *Goods) ReadGoods() {
-	f, err := excelize.OpenFile(g.GoodsExcelPath)
+func GetExcel(excelPath, excelSheet string) [][]string {
+	f, err := excelize.OpenFile(excelPath)
 	if err != nil {
-		log.Println(err)
-		return
+		log.Fatal(err)
 	}
 	defer f.Close()
-	rows, err := f.GetRows(g.GoodsExcelSheetName)
+	rows, err := f.GetRows(excelSheet)
 	if err != nil {
-		log.Println(err)
-		return
+		log.Fatal(err)
 	}
+	return rows
+}
+
+func (g *Goods) GetGoods(excelPath, excelSheet string) {
+	rows := GetExcel(excelPath, excelSheet)
 	g.GoodsMap = make(map[string][]*GoodsInfo)
 	var key string
 	for i, row := range rows {
-		if i > 0 { // 跳过空行
+		if i > 0 && len(row) != 0 { // 跳过空行
 			col1 := strings.Trim(row[0], " ")
 			if col1 != "" {
 				key = col1
@@ -62,22 +63,4 @@ func (g *Goods) ReadGoods() {
 			}
 		}
 	}
-}
-
-func (g *Goods) GetSkuDisplayList() (skuList []string) {
-	g.ReadGoods()
-	for _, l := range g.GoodsMap {
-		for _, v := range l {
-			skuList = append(skuList, v.SkuDisplay)
-		}
-	}
-	return
-}
-
-func (g *Goods) GetComparisonMap() map[string]*Comparison {
-	goodsComparisonExcelPath := "/Users/machao/Desktop/批量上商品app/批量上商品app/模板-型号图片对照表.xlsx"
-	goodsComparisonExcelSheetName := "直边tpu"
-	com := Comparisons{ExcelPath: goodsComparisonExcelPath, ExcelSheetName: goodsComparisonExcelSheetName}
-	com.Read()
-	return com.ComparisonMap
 }

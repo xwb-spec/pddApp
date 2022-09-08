@@ -1,8 +1,6 @@
 package common
 
 import (
-	"github.com/xuri/excelize/v2"
-	"log"
 	"strconv"
 	"strings"
 )
@@ -37,27 +35,15 @@ type SkuConfig struct {
 }
 
 type GoodsConfig struct {
-	ExcelPath                 string
-	ExcelSheetName            string
 	SkuConfigList             []SkuConfig
 	DetailGalleryConfigList   []DetailGalleryConfig
 	CarouselGalleryConfigList []CarouselGalleryConfig
 }
 
-func (g *GoodsConfig) ReadConfig() (goodsConfig GoodsConfig) {
-	f, err := excelize.OpenFile(g.ExcelPath)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	defer f.Close()
-	rows, err := f.GetRows(g.ExcelSheetName)
-	if err != nil {
-		log.Println(err)
-		return
-	}
+func (g *GoodsConfig) GetConfig(excelPath, excelSheet string) (goodsConfig GoodsConfig) {
+	rows := GetExcel(excelPath, excelSheet)
 	for i, row := range rows {
-		if i > 0 {
+		if i > 0 && len(row) != 0 {
 			isPublicVal := strings.Trim(row[1], " ")
 			var isPublic bool
 			if isPublicVal == "公用" {
