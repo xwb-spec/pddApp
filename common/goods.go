@@ -6,10 +6,6 @@ import (
 	"strings"
 )
 
-type ExcelConfig struct {
-	ExcelPath      string
-	ExcelSheetName string
-}
 type GoodsInfo struct {
 	Model       string // 型号
 	BrandPrefix string //品牌前缀
@@ -36,15 +32,37 @@ func GetExcel(excelPath, excelSheet string) [][]string {
 	return rows
 }
 
+func GetGoodsProperties(excelPath, excelSheet string) {
+	rows := GetExcel(excelPath, excelSheet)
+	keyMap := rows[0]
+	propertiesMap := make(map[string][]string)
+	for idx, row := range rows {
+		if idx > 0 && len(row) != 0 {
+			if strings.Trim(row[0], " ") != "" {
+				propertiesMap[keyMap[0]] = append(propertiesMap[keyMap[0]], row[0])
+			}
+			if strings.Trim(row[1], " ") != "" {
+				propertiesMap[keyMap[1]] = append(propertiesMap[keyMap[1]], row[1])
+			}
+			if strings.Trim(row[2], " ") != "" {
+				propertiesMap[keyMap[0]] = append(propertiesMap[keyMap[0]], row[0])
+			}
+			if strings.Trim(row[3], " ") != "" {
+				propertiesMap[keyMap[0]] = append(propertiesMap[keyMap[0]], row[0])
+			}
+		}
+	}
+}
+
 func (g *Goods) GetGoods(excelPath, excelSheet string) {
 	rows := GetExcel(excelPath, excelSheet)
 	g.GoodsMap = make(map[string][]*GoodsInfo)
 	var key string
 	for i, row := range rows {
 		if i > 0 && len(row) != 0 { // 跳过空行
-			col1 := strings.Trim(row[0], " ")
-			if col1 != "" {
-				key = col1
+			title := strings.Trim(row[0], " ")
+			if title != "" {
+				key = title
 				g.GoodsMap[key] = append(g.GoodsMap[key], &GoodsInfo{
 					Model:       strings.Trim(row[1], " "),
 					BrandPrefix: strings.Trim(row[2], " "),

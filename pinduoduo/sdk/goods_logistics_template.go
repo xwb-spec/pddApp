@@ -17,17 +17,16 @@ type LogisticsTemplate struct {
 	TemplateName    int   `json:"template_name"`
 }
 
-func (p *Pdd) LogisticsTemplateListGet(page, pageSize int) (res *GoodsLogisticsTemplateListResponse, err error) {
+func (g *GoodsAPI) LogisticsTemplateListGet(page, pageSize int) (resp *GoodsLogisticsTemplateListResponse, err error) {
 	params := NewParamsWithType("pdd.goods.logistics.template.get")
 	params.Set("page", page)
 	params.Set("page_size", pageSize)
 
-	r, err := Call(p.Context, params)
+	r, err := Call(g.Context, params)
 	if err != nil {
 		return
 	}
 	bytes, err := GetResponseBytes(r, "goods_logistics_template_get_response")
-	res = new(GoodsLogisticsTemplateListResponse)
-	err = json.Unmarshal(bytes, res)
+	err = json.Unmarshal(bytes, resp)
 	return
 }

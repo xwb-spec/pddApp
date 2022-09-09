@@ -11,7 +11,7 @@ type Category struct {
 	CatName string `json:"cat_name"`
 }
 
-func (g *GoodsAPI) GoodsAuthorizationCatGet(parentCatId int) (res []*Category, err error) {
+func (g *GoodsAPI) GoodsAuthorizationCatGet(parentCatId int) (resp []*Category, err error) {
 	params := NewParamsWithType("pdd.goods.cats.get")
 	params.Set("parent_cat_id", parentCatId)
 	r, err := Call(g.Context, params)
@@ -19,6 +19,6 @@ func (g *GoodsAPI) GoodsAuthorizationCatGet(parentCatId int) (res []*Category, e
 		return
 	}
 	bytes, err := GetResponseBytes(r, "goods_auth_cats_get_response", "goods_cats_list")
-	json.Unmarshal(bytes, &res)
+	json.Unmarshal(bytes, &resp)
 	return
 }

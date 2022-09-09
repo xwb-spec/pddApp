@@ -10,15 +10,15 @@ import (
 /* 图片上传接口,
 支持格式有：jpg/jpeg、png等图片格式，注意入参图片必须转码为base64编码
 */
-type GoodsImageUploadResponse struct {
-	ImageUploadResponse ImageUploadResponse `json:"goods_image_upload_response"`
-}
+//type GoodsImageUploadResponse struct {
+//	ImageUploadResponse ImageUploadResponse `json:"goods_image_upload_response"`
+//}
 
 type ImageUploadResponse struct {
-	url string
+	ImageUrl string `json:"image_url"`
 }
 
-func (g *GoodsAPI) GoodsImageUpload(imagePath string) (res GoodsImageUploadResponse, err error) {
+func (g *GoodsAPI) GoodsImageUpload(imagePath string) (resp ImageUploadResponse, err error) {
 	srcByte, err := ioutil.ReadFile(imagePath)
 	if err != nil {
 		log.Fatal(err)
@@ -30,7 +30,7 @@ func (g *GoodsAPI) GoodsImageUpload(imagePath string) (res GoodsImageUploadRespo
 	if err != nil {
 		return
 	}
-	bytes, err := GetResponseBytes(r, "goods_cats_get_response", "goods_cats_list")
-	json.Unmarshal(bytes, &res)
+	bytes, err := GetResponseBytes(r, "goods_image_upload_response")
+	json.Unmarshal(bytes, &resp)
 	return
 }
