@@ -67,7 +67,7 @@ func (s *ShowInput) FreightTmpContainer() *fyne.Container {
 	freightRefreshButton := widget.NewButton("刷新", func() {
 		fmt.Println("开始刷新")
 	})
-	return container.New(layout.NewGridLayout(3), freightTmpNameLabel, s.FreightTmp, freightRefreshButton)
+	return container.NewBorder(layout.NewSpacer(), layout.NewSpacer(), freightTmpNameLabel, freightRefreshButton, s.FreightTmp)
 }
 
 func (s *ShowInput) PicKitDirContainer() *fyne.Container {
@@ -88,7 +88,7 @@ func (s *ShowInput) PicKitDirContainer() *fyne.Container {
 			s.PicKitDir.SetText(list.Path())
 		}, s.Win)
 	})
-	return container.New(layout.NewGridLayout(3), picKitDirLabel, s.PicKitDir, picKitDirButton)
+	return container.NewBorder(layout.NewSpacer(), layout.NewSpacer(), picKitDirLabel, picKitDirButton, s.PicKitDir)
 }
 
 func (s *ShowInput) PublicDirContainer() *fyne.Container {
@@ -109,7 +109,7 @@ func (s *ShowInput) PublicDirContainer() *fyne.Container {
 			s.PubFileDir.SetText(list.Path())
 		}, s.Win)
 	})
-	return container.New(layout.NewGridLayout(3), publicDirLabel, s.PubFileDir, publicDirButton)
+	return container.NewBorder(layout.NewSpacer(), layout.NewSpacer(), publicDirLabel, publicDirButton, s.PubFileDir)
 }
 
 func (s *ShowInput) UploadedPicFileContainer() *fyne.Container {
@@ -131,7 +131,7 @@ func (s *ShowInput) UploadedPicFileContainer() *fyne.Container {
 		fd.SetFilter(storage.NewExtensionFileFilter([]string{".json"})) //打开的文件格式类型
 		fd.Show()
 	})
-	return container.New(layout.NewGridLayout(3), uploadedPicFileLabel, s.UploadedImageConfig, uploadedPicFileButton)
+	return container.NewBorder(layout.NewSpacer(), layout.NewSpacer(), uploadedPicFileLabel, uploadedPicFileButton, s.UploadedImageConfig)
 }
 
 func (s *ShowInput) ShopExcelContainer() *fyne.Container {
@@ -153,7 +153,7 @@ func (s *ShowInput) ShopExcelContainer() *fyne.Container {
 		fd.SetFilter(storage.NewExtensionFileFilter([]string{".xlsx"})) //打开的文件格式类型
 		fd.Show()
 	})
-	return container.New(layout.NewGridLayout(3), shopExcelLabel, s.ShopExcel, shopExcelButton)
+	return container.NewBorder(layout.NewSpacer(), layout.NewSpacer(), shopExcelLabel, shopExcelButton, s.ShopExcel)
 }
 func (s *ShowInput) SkuExcelContainer() *fyne.Container {
 	// sku配置表
@@ -174,7 +174,7 @@ func (s *ShowInput) SkuExcelContainer() *fyne.Container {
 		fd.SetFilter(storage.NewExtensionFileFilter([]string{".xlsx"})) //打开的文件格式类型
 		fd.Show()
 	})
-	return container.New(layout.NewGridLayout(3), skuExcelLabel, s.SkuExcel, skuExcelButton)
+	return container.NewBorder(layout.NewSpacer(), layout.NewSpacer(), skuExcelLabel, skuExcelButton, s.SkuExcel)
 }
 func (s *ShowInput) ModelExcelContainer() *fyne.Container {
 	// 型号对照表
@@ -195,7 +195,7 @@ func (s *ShowInput) ModelExcelContainer() *fyne.Container {
 		fd.SetFilter(storage.NewExtensionFileFilter([]string{".xlsx"})) //打开的文件格式类型
 		fd.Show()
 	})
-	return container.New(layout.NewGridLayout(3), modelExcelLabel, s.ModelExcel, modelExcelButton)
+	return container.NewBorder(layout.NewSpacer(), layout.NewSpacer(), modelExcelLabel, modelExcelButton, s.ModelExcel)
 }
 func (s *ShowInput) Sheet1Container() *fyne.Container {
 	// 商品表表单
