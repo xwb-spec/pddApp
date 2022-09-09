@@ -23,10 +23,10 @@ func createSign(signStr string) string {
 	return strings.ToUpper(hex.EncodeToString(cipherStr))
 }
 
-//func NewParams() Params {
-//	p := make(Params)
-//	return p
-//}
+func NewParams() Params {
+	p := make(Params)
+	return p
+}
 
 func NewParamsWithType(_type MethodType, params ...Params) Params {
 	p := make(Params)
