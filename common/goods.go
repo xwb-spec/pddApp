@@ -56,9 +56,7 @@ func GetGoodsProperties(excelPath, excelSheet string) map[string][]string {
 					propertiesMap[key] = append(propertiesMap[key], c)
 				}
 			}
-
 		}
-
 	}
 	return propertiesMap
 }

@@ -184,7 +184,7 @@ func (s *ShowInput) CheckImagePath() (errs []error) {
 			}
 		}
 	}
-	compMap := common.GetComp(s.ModelExcel.Text, s.ModelSheetName.Text)
+	compMap := common.GetComparison(s.ModelExcel.Text, s.ModelSheetName.Text)
 	g := common.GoodsConfig{}
 	g.GetConfig(s.SkuExcel.Text, s.SkuSheetName.Text)
 	for _, m := range modelList {

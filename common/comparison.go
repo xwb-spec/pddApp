@@ -9,7 +9,7 @@ type Comparison struct {
 	Brand  *string
 }
 
-func GetComp(excelPath, excelSheet string) (ComparisonMap map[string]*Comparison) {
+func GetComparison(excelPath, excelSheet string) (ComparisonMap map[string]*Comparison) {
 	rows := GetExcelRows(excelPath, excelSheet)
 	ComparisonMap = make(map[string]*Comparison)
 	for i, row := range rows {
