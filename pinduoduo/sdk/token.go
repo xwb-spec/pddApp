@@ -34,7 +34,6 @@ type PopAuthTokenCreateResponse struct {
 func (g *TokenAPI) TokenGet(code string) (res *PopAuthTokenCreateResponse, err error) {
 	params := NewParamsWithType("pdd.pop.auth.token.create")
 	params.Set("code", code)
-
 	r, err := Call(g.Context, params)
 	if err != nil {
 		return

@@ -24,3 +24,11 @@ func (p *Pdd) GetGoodsAPI() *GoodsAPI {
 func (p *Pdd) GetTokenAPI() *TokenAPI {
 	return newTokenAPIWithContext(p.Context)
 }
+
+func (p *Pdd) GoodAPI() *GoodsAPI {
+	return newGoodsAPIWithContext(p.Context)
+}
+
+func (p *Pdd) GoodsAuthorizationCat() *TokenAPI {
+	return newTokenAPIWithContext(p.Context)
+}

@@ -2,7 +2,6 @@ package sdk
 
 import (
 	"encoding/json"
-	"log"
 )
 
 type GoodsAPI struct {
@@ -36,31 +35,12 @@ type GoodsResultResponse struct {
 	GoodsAddResponse GoodsAddResponse `json:"goods_add_response"`
 }
 
-func (g *GoodsAPI) getGoodsProperties() {
-	goodsCatRuleGet, err := g.GoodsCatRuleGet()
-	if err != nil {
-		log.Println("获取商品属性失败")
-	}
-	var goodsProperties []*GoodsProperties
-	for _, r := range goodsCatRuleGet {
-		refPid := r.RefPid
-		for _, i := range r.Values {
-			goodsProperties = append(goodsProperties, &GoodsProperties{
-				RefPid: refPid,
-				Vid:    i.Vid,
-				Value:  i.Value,
-				SpecId: i.SpecId,
-			})
-		}
-	}
-}
-func (g *GoodsAPI) GoodsAdd(goodsName, goodsDesc string, goodsPropertiesList []*GoodsProperties) (resp GoodsResultResponse, err error) {
+func (g *GoodsAPI) GoodsAdd(goodsName, goodsDesc string, carouselGallery, detailGallery []string, goodsProperties []interface{}) (resp GoodsResultResponse, err error) {
 	params := NewParamsWithType("pdd.goods.add")
-	params.Set("goods_name", goodsName)        // 商品标题
-	params.Set("goods_desc", goodsDesc)        // 商品描述
-	params.Set("carousel_gallery", []string{}) // 商品主图/轮播图
-	params.Set("detail_gallery", []string{})   //商品详情图
-	goodsProperties, _ := json.Marshal(&goodsPropertiesList)
+	params.Set("goods_name", goodsName)             // 商品标题
+	params.Set("goods_desc", goodsDesc)             // 商品描述
+	params.Set("carousel_gallery", carouselGallery) // 商品主图/轮播图
+	params.Set("detail_gallery", detailGallery)     //商品详情图
 	params.Set("goods_properties", goodsProperties)
 	r, err := Call(g.Context, params)
 	if err != nil {

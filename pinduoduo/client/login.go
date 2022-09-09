@@ -97,12 +97,10 @@ func GetToken() string {
 	if err != nil {
 		log.Println(err)
 	}
-	params := sdk.NewParamsWithType("pdd.pop.auth.token.create")
-	params.Set("code", code)
-	s := p.GetTokenAPI()
-	t, err := s.TokenGet(code.Code)
+	pdd := p.GetTokenAPI()
+	resp, err := pdd.TokenGet(code.Code)
 	if err != nil {
 		log.Println("获取token失败")
 	}
-	return t.AccessToken
+	return resp.AccessToken
 }
