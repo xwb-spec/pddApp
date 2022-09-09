@@ -19,7 +19,7 @@ type Goods struct {
 	GoodsMap map[string][]*GoodsInfo
 }
 
-func GetExcel(excelPath, excelSheet string) [][]string {
+func GetExcelRows(excelPath, excelSheet string) [][]string {
 	f, err := excelize.OpenFile(excelPath)
 	if err != nil {
 		log.Fatal(err)
@@ -32,30 +32,39 @@ func GetExcel(excelPath, excelSheet string) [][]string {
 	return rows
 }
 
-func GetGoodsProperties(excelPath, excelSheet string) {
-	rows := GetExcel(excelPath, excelSheet)
-	keyMap := rows[0]
-	propertiesMap := make(map[string][]string)
-	for idx, row := range rows {
-		if idx > 0 && len(row) != 0 {
-			if strings.Trim(row[0], " ") != "" {
-				propertiesMap[keyMap[0]] = append(propertiesMap[keyMap[0]], row[0])
-			}
-			if strings.Trim(row[1], " ") != "" {
-				propertiesMap[keyMap[1]] = append(propertiesMap[keyMap[1]], row[1])
-			}
-			if strings.Trim(row[2], " ") != "" {
-				propertiesMap[keyMap[0]] = append(propertiesMap[keyMap[0]], row[0])
-			}
-			if strings.Trim(row[3], " ") != "" {
-				propertiesMap[keyMap[0]] = append(propertiesMap[keyMap[0]], row[0])
-			}
-		}
+func GetExcelCols(excelPath, excelSheet string) [][]string {
+	f, err := excelize.OpenFile(excelPath)
+	if err != nil {
+		log.Fatal(err)
 	}
+	defer f.Close()
+	cols, err := f.GetCols(excelSheet)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return cols
+}
+
+func GetGoodsProperties(excelPath, excelSheet string) map[string][]string {
+	cols := GetExcelCols(excelPath, excelSheet)
+	propertiesMap := make(map[string][]string)
+	for _, col := range cols {
+		key := strings.Trim(col[0], " ")
+		if key != "" {
+			for _, c := range col[1:] {
+				if strings.Trim(c, " ") != "" {
+					propertiesMap[key] = append(propertiesMap[key], c)
+				}
+			}
+
+		}
+
+	}
+	return propertiesMap
 }
 
 func (g *Goods) GetGoods(excelPath, excelSheet string) {
-	rows := GetExcel(excelPath, excelSheet)
+	rows := GetExcelRows(excelPath, excelSheet)
 	g.GoodsMap = make(map[string][]*GoodsInfo)
 	var key string
 	for i, row := range rows {

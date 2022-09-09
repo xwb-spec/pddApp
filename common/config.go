@@ -41,7 +41,7 @@ type GoodsConfig struct {
 }
 
 func (g *GoodsConfig) GetConfig(excelPath, excelSheet string) (goodsConfig GoodsConfig) {
-	rows := GetExcel(excelPath, excelSheet)
+	rows := GetExcelRows(excelPath, excelSheet)
 	for i, row := range rows {
 		if i > 0 && len(row) != 0 {
 			isPublicVal := strings.Trim(row[1], " ")

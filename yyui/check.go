@@ -172,7 +172,7 @@ func (s *ShowInput) CheckInput() {
 
 // 检查套图
 func (s *ShowInput) CheckImagePath() (errs []error) {
-	modelRows := common.GetExcel(s.ShopExcel.Text, s.ShopSheetName.Text)
+	modelRows := common.GetExcelRows(s.ShopExcel.Text, s.ShopSheetName.Text)
 	var modelList []string
 	for i, row := range modelRows {
 		if i > 0 && len(row) != 0 {

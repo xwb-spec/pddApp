@@ -10,7 +10,7 @@ type Comparison struct {
 }
 
 func GetComp(excelPath, excelSheet string) (ComparisonMap map[string]*Comparison) {
-	rows := GetExcel(excelPath, excelSheet)
+	rows := GetExcelRows(excelPath, excelSheet)
 	ComparisonMap = make(map[string]*Comparison)
 	for i, row := range rows {
 		if i > 0 && len(row) != 0 {
