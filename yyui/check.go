@@ -165,6 +165,7 @@ func (s *ShowInput) CheckInput() {
 	errs := s.CheckImagePath()
 	for _, err := range errs {
 		s.ConsoleResult.SetText(resultConsole + err.Error())
+		return
 	}
 	s.ConsoleResult.SetText(resultConsole + "检测成功")
 	return
