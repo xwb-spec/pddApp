@@ -1,6 +1,7 @@
 package common
 
 import (
+	"github.com/xuri/excelize/v2"
 	"os"
 	"sort"
 )
@@ -24,4 +25,16 @@ func IsEleExistsSlice(ele string, strSlice []string) bool {
 		return true
 	}
 	return false
+}
+func IsSheetExists(excelPath, sheetName string) bool {
+	f, err := excelize.OpenFile(excelPath)
+	if err != nil {
+		return false
+	}
+	defer f.Close()
+	idx := f.GetSheetIndex(sheetName)
+	if idx < 0 {
+		return false
+	}
+	return true
 }

@@ -3,24 +3,11 @@ package yyui
 import (
 	"errors"
 	"fmt"
-	"github.com/xuri/excelize/v2"
 	"log"
 	"pddApp/common"
 	"strings"
 )
 
-func CheckExcelSheet(excelPath, sheetName string) bool {
-	f, err := excelize.OpenFile(excelPath)
-	if err != nil {
-		return false
-	}
-	defer f.Close()
-	_, err = f.GetRows(sheetName)
-	if err != nil {
-		return false
-	}
-	return true
-}
 func (s *ShowInput) CheckInput() {
 	log.Println("走checkInput函数")
 	resultConsole := s.ConsoleResult.Text + "\n"
@@ -128,7 +115,7 @@ func (s *ShowInput) CheckInput() {
 		s.ConsoleResult.SetText(resultConsole + "商品配置表表单为空: [ERROR] 请填写")
 		return
 	} else {
-		if !CheckExcelSheet(s.ShopExcel.Text, s.ShopSheetName.Text) {
+		if !common.IsSheetExists(s.ShopExcel.Text, s.ShopSheetName.Text) {
 			s.ConsoleResult.SetText(resultConsole + "商品配置表表单不存在: [ERROR] 请检查商品表单")
 			return
 		}
@@ -137,7 +124,7 @@ func (s *ShowInput) CheckInput() {
 		s.ConsoleResult.SetText(resultConsole + "型号对照表表单为空: [ERROR] 请填写")
 		return
 	} else {
-		if !CheckExcelSheet(s.ModelExcel.Text, s.ModelSheetName.Text) {
+		if !common.IsSheetExists(s.ModelExcel.Text, s.ModelSheetName.Text) {
 			log.Println("型号有没有走这里")
 			s.ConsoleResult.SetText(resultConsole + "型号对照表表单不存在: [ERROR] 请检查型号对照表表单")
 			return
@@ -147,7 +134,7 @@ func (s *ShowInput) CheckInput() {
 		s.ConsoleResult.SetText(resultConsole + "sku配置表表单为空: [ERROR] 请填写")
 		return
 	} else {
-		if !CheckExcelSheet(s.SkuExcel.Text, s.SkuSheetName.Text) {
+		if !common.IsSheetExists(s.SkuExcel.Text, s.SkuSheetName.Text) {
 			s.ConsoleResult.SetText(resultConsole + "sku配置表表单不存在: [ERROR] 请检查sku配置表表单")
 			return
 		}
@@ -156,7 +143,7 @@ func (s *ShowInput) CheckInput() {
 		s.ConsoleResult.SetText(resultConsole + "属性配置表表单为空: [ERROR] 请填写")
 		return
 	} else {
-		if !CheckExcelSheet(s.SkuExcel.Text, s.AttrSheetName.Text) {
+		if !common.IsSheetExists(s.SkuExcel.Text, s.AttrSheetName.Text) {
 			s.ConsoleResult.SetText(resultConsole + "属性配置表表单不存在: [ERROR] 请检查属性配置表表单")
 			return
 		}
