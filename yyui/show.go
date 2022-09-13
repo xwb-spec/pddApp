@@ -1,6 +1,7 @@
 package yyui
 
 import (
+	"encoding/json"
 	"fmt"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
@@ -10,6 +11,7 @@ import (
 	"fyne.io/fyne/v2/storage"
 	"fyne.io/fyne/v2/widget"
 	"log"
+	"os"
 	"pddApp/pinduoduo/client"
 )
 
@@ -249,16 +251,30 @@ func (s *ShowInput) ButtonContainer() *fyne.Container {
 
 	})
 	checkConfig := widget.NewButton("检测配置", func() {
-
+		s.CheckConfig()
 	})
 	startUpload := widget.NewButton("开始上传", func() {
-		fmt.Println(s.ShopExcel)
+		a, _ := s.GetGoods()
+		filePtr, err := os.Create("./test.json")
+		if err != nil {
+			log.Println("文件创建失败 [ERROR]: " + err.Error())
+			return
+		}
+		defer filePtr.Close()
+		// 创建Json编码器
+		encoder := json.NewEncoder(filePtr)
+		err = encoder.Encode(a)
+		if err != nil {
+			log.Println("test.json保存错误", err.Error())
+		} else {
+			log.Println("test.json保存成功")
+		}
 	})
 	return container.New(layout.NewGridLayout(3), checkPic, checkConfig, startUpload)
 }
 func (s *ShowInput) ResultContainer() *fyne.Container {
 	s.ConsoleResult = widget.NewMultiLineEntry()
-	s.ConsoleResult.Resize(fyne.NewSize(790, 250))
+	s.ConsoleResult.Resize(fyne.NewSize(790, 230))
 	s.ConsoleResult.SetText(s.ConsoleResult.Text)
 	return container.NewWithoutLayout(s.ConsoleResult)
 }

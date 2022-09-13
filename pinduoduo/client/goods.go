@@ -20,7 +20,7 @@ func GoodsCatRuleGet() {
 	if err != nil {
 		log.Println("获取商品发布规则失败")
 	}
-	pro := common.GetGoodsProperties("", "")
+	pro, _ := common.GetGoodsProperties("", "")
 	var rules []*sdk.GoodsProperties
 	for _, d := range resp {
 		refPid := d.RefPid

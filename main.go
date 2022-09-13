@@ -45,7 +45,7 @@ func runWin() {
 	s.MainShow(w)
 	s.GetInput() // 初始化对话框数据
 	//尺寸
-	w.Resize(fyne.Size{Width: 800, Height: 800})
+	w.Resize(fyne.Size{Width: 800, Height: 850})
 	//w居中显示
 	w.CenterOnScreen()
 	//循环运行

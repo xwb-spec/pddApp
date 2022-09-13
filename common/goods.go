@@ -2,7 +2,6 @@ package common
 
 import (
 	"github.com/xuri/excelize/v2"
-	"log"
 	"strings"
 )
 
@@ -14,40 +13,38 @@ type GoodsInfo struct {
 	SkuDisplay  string //sku显示
 }
 
-// 装载商品数据
-type Goods struct {
-	GoodsMap map[string][]*GoodsInfo
-}
-
-func GetExcelRows(excelPath, excelSheet string) [][]string {
+func GetExcelRows(excelPath, excelSheet string) (rows [][]string, err error) {
 	f, err := excelize.OpenFile(excelPath)
 	if err != nil {
-		log.Fatal(err)
+		return
 	}
 	defer f.Close()
-	rows, err := f.GetRows(excelSheet)
+	rows, err = f.GetRows(excelSheet)
 	if err != nil {
-		log.Fatal(err)
+		return
 	}
-	return rows
+	return rows, nil
 }
 
-func GetExcelCols(excelPath, excelSheet string) [][]string {
+func GetExcelCols(excelPath, excelSheet string) (cols [][]string, err error) {
 	f, err := excelize.OpenFile(excelPath)
 	if err != nil {
-		log.Fatal(err)
+		return
 	}
 	defer f.Close()
-	cols, err := f.GetCols(excelSheet)
+	cols, err = f.GetCols(excelSheet)
 	if err != nil {
-		log.Fatal(err)
+		return
 	}
-	return cols
+	return cols, nil
 }
 
-func GetGoodsProperties(excelPath, excelSheet string) map[string][]string {
-	cols := GetExcelCols(excelPath, excelSheet)
-	propertiesMap := make(map[string][]string)
+func GetGoodsProperties(excelPath, excelSheet string) (propertiesMap map[string][]string, err error) {
+	cols, err := GetExcelCols(excelPath, excelSheet)
+	if err != nil {
+		return
+	}
+	propertiesMap = make(map[string][]string)
 	for _, col := range cols {
 		key := strings.Trim(col[0], " ")
 		if key != "" {
@@ -58,19 +55,22 @@ func GetGoodsProperties(excelPath, excelSheet string) map[string][]string {
 			}
 		}
 	}
-	return propertiesMap
+	return propertiesMap, nil
 }
 
-func (g *Goods) GetGoods(excelPath, excelSheet string) {
-	rows := GetExcelRows(excelPath, excelSheet)
-	g.GoodsMap = make(map[string][]*GoodsInfo)
+func GetGoodsMap(excelPath, excelSheet string) (goodsMap map[string][]*GoodsInfo, err error) {
+	rows, err := GetExcelRows(excelPath, excelSheet)
+	if err != nil {
+		return goodsMap, err
+	}
+	goodsMap = make(map[string][]*GoodsInfo)
 	var key string
 	for i, row := range rows {
 		if i > 0 && len(row) != 0 { // 跳过空行
 			title := strings.Trim(row[0], " ")
 			if title != "" {
 				key = title
-				g.GoodsMap[key] = append(g.GoodsMap[key], &GoodsInfo{
+				goodsMap[key] = append(goodsMap[key], &GoodsInfo{
 					Model:       strings.Trim(row[1], " "),
 					BrandPrefix: strings.Trim(row[2], " "),
 					IsLowPrice:  strings.Trim(row[3], " "),
@@ -78,7 +78,7 @@ func (g *Goods) GetGoods(excelPath, excelSheet string) {
 					SkuDisplay:  strings.Trim(row[5], " "),
 				})
 			} else {
-				g.GoodsMap[key] = append(g.GoodsMap[key], &GoodsInfo{
+				goodsMap[key] = append(goodsMap[key], &GoodsInfo{
 					Model:       strings.Trim(row[1], " "),
 					BrandPrefix: strings.Trim(row[2], " "),
 					IsLowPrice:  strings.Trim(row[3], " "),
@@ -88,4 +88,5 @@ func (g *Goods) GetGoods(excelPath, excelSheet string) {
 			}
 		}
 	}
+	return goodsMap, nil
 }
