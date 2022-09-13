@@ -165,7 +165,6 @@ func (s *ShowInput) CheckImagePath() {
 		isExists := false
 		value := ""
 		for _, d := range v {
-			fmt.Println(d.Model)
 			val, ok := compMap[d.Model] // 从map查找图片目录是否存在
 			if ok {
 				isExists = true
@@ -173,13 +172,10 @@ func (s *ShowInput) CheckImagePath() {
 				break
 			}
 		}
-		fmt.Println(value)
 		if !isExists {
 			s.ConsoleResult.SetText(fmt.Sprintf("[ERROR] :商品[%s]对应的图片目录不存在", k))
 			return
 		} else {
-			fmt.Println(s.PicKitDir.Text, value)
-			fmt.Println(s.PicKitDir.Text, value)
 			imageDir := s.PicKitDir.Text + "/" + value
 			for _, d := range goodsConfig.DetailGalleryConfigList { // 检查详情图是否完全
 				if !d.IsPublic { // 不是处理公用图
