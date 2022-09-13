@@ -66,7 +66,7 @@ func GetGoodsMap(excelPath, excelSheet string) (goodsMap map[string][]*GoodsInfo
 	goodsMap = make(map[string][]*GoodsInfo)
 	var key string
 	for i, row := range rows {
-		if i > 0 && len(row) != 0 { // 跳过空行
+		if i > 0 && len(row) == 5 { // 跳过空行
 			title := strings.Trim(row[0], " ")
 			if title != "" {
 				key = title

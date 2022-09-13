@@ -21,7 +21,6 @@ func (g *GoodsAPI) LogisticsTemplateListGet(page, pageSize int) (resp *GoodsLogi
 	params := NewParamsWithType("pdd.goods.logistics.template.get")
 	params.Set("page", page)
 	params.Set("page_size", pageSize)
-
 	r, err := Call(g.Context, params)
 	if err != nil {
 		return
