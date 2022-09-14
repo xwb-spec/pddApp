@@ -1,8 +1,6 @@
 package yyui
 
 import (
-	"fmt"
-	"log"
 	"pddApp/common"
 )
 
@@ -44,11 +42,20 @@ func (s *ShowInput) GetGoods() (goods []Goods, err error) {
 		var isOnlineList []string
 		var isLowPrice bool
 		var isOnline bool
+		imageDir := ""
+		for _, l := range v {
+			val, ok := goodsImageMap[l.Model] // 从map查找图片目录是否存在
+			if ok {
+				imageDir = *val.PicDir
+				break
+			}
+		}
 		for _, l := range v {
 			modelList = append(modelList, l.Model)
 			skuList = append(skuList, l.SkuDisplay)
 			isLowPriceList = append(isLowPriceList, l.IsLowPrice)
 			isOnlineList = append(isOnlineList, l.IsOnline)
+
 		}
 		if common.IsEleExistsSlice("低价", isLowPriceList) {
 			isLowPrice = true
@@ -56,24 +63,17 @@ func (s *ShowInput) GetGoods() (goods []Goods, err error) {
 		if common.IsEleExistsSlice("是", isOnlineList) {
 			isOnline = true
 		}
-		imageDirKey := modelList[0]
-		imageDir, ok := goodsImageMap[imageDirKey]
-		if !ok {
-			log.Printf("[ERROR]: 型号[%s]对应图片文件夹不存在\n", imageDirKey)
-			s.ConsoleResult.SetText(fmt.Sprintf("[ERROR]: 型号[%s]对应图片文件夹不存在", imageDirKey))
-			return
-		}
 		goodsDetailGallery := make([]string, len(goodsConfig.DetailGalleryConfigList))
 		goodsCarouselGallery := make([]string, len(goodsConfig.CarouselGalleryConfigList))
 		for _, i := range goodsConfig.DetailGalleryConfigList {
 			if i.IsPublic {
 				goodsDetailGallery[i.Num-1] = pubDir + "/" + i.FileName + ".jpg"
 			} else {
-				goodsDetailGallery[i.Num-1] = picDir + "/" + *imageDir.PicDir + "/" + i.FileName + ".jpg"
+				goodsDetailGallery[i.Num-1] = picDir + "/" + imageDir + "/" + i.FileName + ".jpg"
 			}
 		}
 		for _, i := range goodsConfig.CarouselGalleryConfigList {
-			goodsCarouselGallery[i.Num-1] = picDir + "/" + *imageDir.PicDir + "/" + i.FileName + ".jpg"
+			goodsCarouselGallery[i.Num-1] = picDir + "/" + imageDir + "/" + i.FileName + ".jpg"
 		}
 		goods = append(goods, Goods{
 			CatId:           1234,

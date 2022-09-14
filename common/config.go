@@ -52,7 +52,7 @@ func GetGoodsComparison(excelPath, excelSheet string) (ComparisonMap map[string]
 	}
 	ComparisonMap = make(map[string]*Comparison)
 	for i, row := range rows {
-		if i > 0 && len(row) != 0 {
+		if i > 0 && len(row) == 3 {
 			key := strings.Trim(row[0], " ")
 			if key != "" {
 				picDir := strings.Trim(row[1], " ")
@@ -83,7 +83,7 @@ func GetGoodsConfig(excelPath, excelSheet string) (goodsConfig GoodsConfig, err 
 			}
 			num, _ := strconv.Atoi(strings.Trim(row[3], " ")) // 转换为数字类型
 			configType := strings.Trim(row[0], " ")           //去除两端空格
-			if configType == "sku" {
+			if configType == "sku" && len(row) == 14 {
 				goodsConfig.SkuConfigList = append(goodsConfig.SkuConfigList, SkuConfig{
 					IsPublic:         isPublic,
 					FileName:         strings.Trim(row[2], " "),
@@ -99,13 +99,13 @@ func GetGoodsConfig(excelPath, excelSheet string) (goodsConfig GoodsConfig, err 
 					LowPriceDrainage: strings.Trim(row[12], " "),
 					MarketPrice:      strings.Trim(row[13], " "),
 				})
-			} else if configType == "主图" {
+			} else if configType == "主图" && len(row) == 4 {
 				goodsConfig.CarouselGalleryConfigList = append(goodsConfig.CarouselGalleryConfigList, CarouselGalleryConfig{
 					IsPublic: isPublic,
 					FileName: strings.Trim(row[2], " "),
 					Num:      num,
 				})
-			} else if configType == "详情" {
+			} else if configType == "详情" && len(row) == 4 {
 				goodsConfig.DetailGalleryConfigList = append(goodsConfig.DetailGalleryConfigList, DetailGalleryConfig{
 					IsPublic: isPublic,
 					FileName: strings.Trim(row[2], " "),

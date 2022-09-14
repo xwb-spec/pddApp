@@ -189,8 +189,8 @@ func (s *ShowInput) CheckImagePath() {
 						s.ConsoleResult.SetText(fmt.Sprintf("[ERROR]: 详情图[%s]不存在", imagePath))
 						return
 					}
-				} else {
-					b, err := common.IsPathExists(s.PubFileDir.Text + "/" + d.FileName + ".png")
+				} else { // 公用图
+					b, err := common.IsPathExists(s.PubFileDir.Text + "/" + d.FileName + ".jpg")
 					if err != nil {
 						s.ConsoleResult.SetText(fmt.Sprintf("[ERROR]: 公用图[%s]", err))
 						return
@@ -230,7 +230,6 @@ func (s *ShowInput) CheckImagePath() {
 				}
 			}
 		}
-
 	}
 	s.ConsoleResult.SetText("[OK]: 图片检测通过")
 }
