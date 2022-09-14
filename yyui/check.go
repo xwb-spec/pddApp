@@ -3,6 +3,7 @@ package yyui
 import (
 	"fmt"
 	"pddApp/common"
+	"strings"
 )
 
 func (s *ShowInput) CheckInput() {
@@ -161,19 +162,20 @@ func (s *ShowInput) CheckImagePath() {
 		s.ConsoleResult.SetText(fmt.Sprintf("[ERROR]: 读取sku配置表格数据失败, %s", s.ModelExcel.Text))
 		return
 	}
-	for k, v := range goodsMap {
+	for _, v := range goodsMap {
 		isExists := false
-		value := ""
+		var value string
 		for _, d := range v {
-			val, ok := goodsImageMap[d.Model] // 从map查找图片目录是否存在
+			key := strings.ToLower(d.Model)
+			val, ok := goodsImageMap[key] // 从map查找图片目录是否存在
 			if ok {
-				isExists = true
 				value = *val.PicDir
-				break
+				isExists, _ = common.IsPathExists(s.PicKitDir.Text + "/" + value)
+
 			}
 		}
 		if !isExists {
-			s.ConsoleResult.SetText(fmt.Sprintf("[ERROR] :商品[%s]对应的图片目录不存在", k))
+			s.ConsoleResult.SetText(fmt.Sprintf("[ERROR] :商品[%s]对应的图片目录不存在", s.PicKitDir.Text+"/"+value))
 			return
 		} else {
 			imageDir := s.PicKitDir.Text + "/" + value

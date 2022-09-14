@@ -57,9 +57,10 @@ func GetGoodsComparison(excelPath, excelSheet string) (ComparisonMap map[string]
 		if len(row) == 3 {
 			key := strings.Trim(row[0], " ")
 			if key != "" {
+				key = strings.ToLower(key)
 				picDir := strings.Trim(row[1], " ")
 				brand := strings.Trim(row[2], " ")
-				ComparisonMap[strings.Trim(row[0], " ")] = &Comparison{
+				ComparisonMap[key] = &Comparison{
 					PicDir: &picDir,
 					Brand:  &brand,
 				}
