@@ -2,6 +2,7 @@ package yyui
 
 import (
 	"pddApp/common"
+	"strings"
 )
 
 type Goods struct {
@@ -42,12 +43,16 @@ func (s *ShowInput) GetGoods() (goods []Goods, err error) {
 		var isOnlineList []string
 		var isLowPrice bool
 		var isOnline bool
-		imageDir := ""
+		var imageDir string
 		for _, l := range v {
-			val, ok := goodsImageMap[l.Model] // 从map查找图片目录是否存在
+			key := strings.ToLower(l.Model)
+			val, ok := goodsImageMap[key] // 从map查找图片目录是否存在
 			if ok {
-				imageDir = *val.PicDir
-				break
+				is, _ := common.IsPathExists(s.PicKitDir.Text + "/" + *val.PicDir)
+				if is {
+					imageDir = *val.PicDir
+					break
+				}
 			}
 		}
 		for _, l := range v {

@@ -169,8 +169,12 @@ func (s *ShowInput) CheckImagePath() {
 			key := strings.ToLower(d.Model)
 			val, ok := goodsImageMap[key] // 从map查找图片目录是否存在
 			if ok {
-				value = *val.PicDir
-				isExists, _ = common.IsPathExists(s.PicKitDir.Text + "/" + value)
+				is, _ := common.IsPathExists(s.PicKitDir.Text + "/" + value)
+				if is {
+					isExists = true
+					value = *val.PicDir
+					break
+				}
 			}
 		}
 		if !isExists {
