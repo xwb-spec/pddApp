@@ -51,8 +51,10 @@ func GetGoodsComparison(excelPath, excelSheet string) (ComparisonMap map[string]
 		return
 	}
 	ComparisonMap = make(map[string]*Comparison)
-	for i, row := range rows {
-		if i > 0 && len(row) == 3 {
+	rows.Next()
+	for rows.Next() {
+		row, _ := rows.Columns()
+		if len(row) == 3 {
 			key := strings.Trim(row[0], " ")
 			if key != "" {
 				picDir := strings.Trim(row[1], " ")
@@ -64,7 +66,11 @@ func GetGoodsComparison(excelPath, excelSheet string) (ComparisonMap map[string]
 			}
 		}
 	}
-	return
+	// 关闭迭代
+	if err = rows.Close(); err != nil {
+		return ComparisonMap, err
+	}
+	return ComparisonMap, nil
 }
 
 func GetGoodsConfig(excelPath, excelSheet string) (goodsConfig GoodsConfig, err error) {
@@ -72,8 +78,10 @@ func GetGoodsConfig(excelPath, excelSheet string) (goodsConfig GoodsConfig, err 
 	if err != nil {
 		return
 	}
-	for i, row := range rows {
-		if i > 0 && len(row) != 0 {
+	rows.Next()
+	for rows.Next() {
+		row, _ := rows.Columns()
+		if len(row) > 0 {
 			isPublicVal := strings.Trim(row[1], " ")
 			var isPublic bool
 			if isPublicVal == "公用" {
@@ -114,5 +122,9 @@ func GetGoodsConfig(excelPath, excelSheet string) (goodsConfig GoodsConfig, err 
 			}
 		}
 	}
-	return
+	// 关闭迭代
+	if err = rows.Close(); err != nil {
+		return goodsConfig, err
+	}
+	return goodsConfig, nil
 }

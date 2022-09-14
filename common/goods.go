@@ -13,19 +13,18 @@ type GoodsInfo struct {
 	SkuDisplay  string //sku显示
 }
 
-func GetExcelRows(excelPath, excelSheet string) (rows [][]string, err error) {
+func GetExcelRows(excelPath, excelSheet string) (rows *excelize.Rows, err error) {
 	f, err := excelize.OpenFile(excelPath)
 	if err != nil {
 		return
 	}
 	defer f.Close()
-	rows, err = f.GetRows(excelSheet)
+	rows, err = f.Rows(excelSheet)
 	if err != nil {
 		return
 	}
 	return rows, nil
 }
-
 func GetExcelCols(excelPath, excelSheet string) (cols [][]string, err error) {
 	f, err := excelize.OpenFile(excelPath)
 	if err != nil {
@@ -65,8 +64,10 @@ func GetGoodsMap(excelPath, excelSheet string) (goodsMap map[string][]*GoodsInfo
 	}
 	goodsMap = make(map[string][]*GoodsInfo)
 	var key string
-	for i, row := range rows {
-		if i > 0 && len(row) == 6 { // 跳过空行
+	rows.Next() // 跳过第一行
+	for rows.Next() {
+		row, _ := rows.Columns()
+		if len(row) == 6 { // 跳过空行
 			title := strings.Trim(row[0], " ")
 			if title != "" {
 				key = title
@@ -87,6 +88,10 @@ func GetGoodsMap(excelPath, excelSheet string) (goodsMap map[string][]*GoodsInfo
 				})
 			}
 		}
+	}
+	// 关闭迭代
+	if err = rows.Close(); err != nil {
+		return goodsMap, err
 	}
 	return goodsMap, nil
 }
