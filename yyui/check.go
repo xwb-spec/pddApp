@@ -151,7 +151,7 @@ func (s *ShowInput) CheckImagePath() {
 		s.ConsoleResult.SetText(fmt.Sprintf("[ERROR]: 读取商品表格数据失败, %s", s.ShopExcel.Text))
 		return
 	}
-	compMap, err := common.GetGoodsComparison(s.ModelExcel.Text, s.ModelSheetName.Text)
+	goodsImageMap, err := common.GetGoodsComparison(s.ModelExcel.Text, s.ModelSheetName.Text)
 	if err != nil {
 		s.ConsoleResult.SetText(fmt.Sprintf("[ERROR]: 读取型号图片对照表格数据失败, %s", s.ModelExcel.Text))
 		return
@@ -165,7 +165,7 @@ func (s *ShowInput) CheckImagePath() {
 		isExists := false
 		value := ""
 		for _, d := range v {
-			val, ok := compMap[d.Model] // 从map查找图片目录是否存在
+			val, ok := goodsImageMap[d.Model] // 从map查找图片目录是否存在
 			if ok {
 				isExists = true
 				value = *val.PicDir
