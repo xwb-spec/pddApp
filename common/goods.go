@@ -13,6 +13,10 @@ type GoodsInfo struct {
 	SkuDisplay  string //sku显示
 }
 
+type GoodsProperties struct {
+	Brand string
+}
+
 func GetExcelRows(excelPath, excelSheet string) (rows *excelize.Rows, err error) {
 	f, err := excelize.OpenFile(excelPath)
 	if err != nil {
