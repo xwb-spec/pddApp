@@ -171,7 +171,6 @@ func (s *ShowInput) CheckImagePath() {
 			if ok {
 				value = *val.PicDir
 				isExists, _ = common.IsPathExists(s.PicKitDir.Text + "/" + value)
-
 			}
 		}
 		if !isExists {
