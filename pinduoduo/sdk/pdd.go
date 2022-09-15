@@ -29,6 +29,10 @@ func (p *Pdd) GoodAPI() *GoodsAPI {
 	return newGoodsAPIWithContext(p.Context)
 }
 
-func (p *Pdd) GoodsAuthorizationCat() *TokenAPI {
-	return newTokenAPIWithContext(p.Context)
+func (p *Pdd) GoodsAuthorizationCat() *GoodsAPI {
+	return newGoodsAPIWithContext(p.Context)
+}
+
+func (p *Pdd) GoodsImageUpload() *GoodsAPI {
+	return newGoodsAPIWithContext(p.Context)
 }

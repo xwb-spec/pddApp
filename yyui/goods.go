@@ -2,7 +2,9 @@ package yyui
 
 import (
 	"pddApp/common"
+	"pddApp/pinduoduo/client"
 	"strings"
+	"sync"
 )
 
 type Goods struct {
@@ -16,26 +18,64 @@ type Goods struct {
 	IsOnline        bool     `json:"IsOnline"`
 	DetailGallery   []string `json:"DetailGallery"`
 	CarouselGallery []string `json:"CarouselGallery"`
+	SkuGallery      []string `json:"SkuGallery"`
 }
 
+func (s *ShowInput) GetImage() (imageList []string, err error) {
+	goodsConfig, err := common.GetGoodsConfig(s.SkuConfigExcel.Text, s.SkuConfigSheetName.Text)
+	if err != nil {
+		s.ConsoleResult.SetText("[ERROR]: " + err.Error())
+		return
+	}
+	pubDir := s.PublicDir.Text
+	picDir := s.ImageDir.Text
+	goods, err := common.GetGoods(s.GoodsExcel.Text, s.GoodsSheetName.Text, s.ModelImageExcel.Text, s.ModelImageSheetName.Text, picDir)
+	if err != nil {
+		s.ConsoleResult.SetText("[ERROR]: " + err.Error())
+		return
+	}
+	for _, v := range goods {
+		for _, i := range goodsConfig.DetailGalleryConfigList {
+			if i.IsPublic {
+				imageList = append(imageList, pubDir+"/"+i.FileName+".jpg")
+			} else {
+				imageList = append(imageList, v.ImageDir+"/"+i.FileName+".jpg")
+			}
+		}
+		for _, i := range goodsConfig.CarouselGalleryConfigList {
+			imageList = append(imageList, v.ImageDir+"/"+i.FileName+".jpg")
+		}
+		for _, i := range goodsConfig.SkuConfigList {
+			imageList = append(imageList, v.ImageDir+"/"+i.FileName+".jpg")
+		}
+	}
+	return
+}
+func (s *ShowInput) GetImageMap() (imageMap map[string]string, err error) {
+	if err := common.LoadJson(s.UploadedImage.Text, &imageMap); err != nil {
+		return nil, err
+	}
+	return imageMap, err
+}
 func (s *ShowInput) GetGoods() (goods []Goods, err error) {
-	goodsMap, err := common.GetGoodsMap(s.ShopExcel.Text, s.ShopSheetName.Text)
+	goodsMap, err := common.GetGoodsMap(s.GoodsExcel.Text, s.GoodsSheetName.Text)
 	if err != nil {
 		s.ConsoleResult.SetText("[ERROR]: " + err.Error())
 		return
 	}
-	goodsImageMap, err := common.GetGoodsComparison(s.ModelExcel.Text, s.ModelSheetName.Text)
+	goodsImageMap, err := common.GetGoodsComparison(s.ModelImageExcel.Text, s.ModelImageSheetName.Text)
 	if err != nil {
 		s.ConsoleResult.SetText("[ERROR]: " + err.Error())
 		return
 	}
-	goodsConfig, err := common.GetGoodsConfig(s.SkuExcel.Text, s.SkuSheetName.Text)
+	goodsConfig, err := common.GetGoodsConfig(s.SkuConfigExcel.Text, s.SkuConfigSheetName.Text)
 	if err != nil {
 		s.ConsoleResult.SetText("[ERROR]: " + err.Error())
 		return
 	}
-	pubDir := s.PubFileDir.Text
-	picDir := s.PicKitDir.Text
+	imageMap, err := s.GetImageMap()
+	pubDir := s.PublicDir.Text
+	picDir := s.ImageDir.Text
 	for k, v := range goodsMap {
 		var modelList []string
 		var skuList []string
@@ -48,7 +88,7 @@ func (s *ShowInput) GetGoods() (goods []Goods, err error) {
 			key := strings.ToLower(l.Model)
 			val, ok := goodsImageMap[key] // 从map查找图片目录是否存在
 			if ok {
-				is, _ := common.IsPathExists(s.PicKitDir.Text + "/" + *val.PicDir)
+				is, _ := common.IsPathExists(s.ImageDir.Text + "/" + *val.PicDir)
 				if is {
 					imageDir = *val.PicDir
 					break
@@ -70,15 +110,20 @@ func (s *ShowInput) GetGoods() (goods []Goods, err error) {
 		}
 		goodsDetailGallery := make([]string, len(goodsConfig.DetailGalleryConfigList))
 		goodsCarouselGallery := make([]string, len(goodsConfig.CarouselGalleryConfigList))
+		goodsSkulGallery := make([]string, len(goodsConfig.SkuConfigList))
+
 		for _, i := range goodsConfig.DetailGalleryConfigList {
 			if i.IsPublic {
-				goodsDetailGallery[i.Num-1] = pubDir + "/" + i.FileName + ".jpg"
+				goodsDetailGallery[i.Num-1] = imageMap[pubDir+"/"+i.FileName+".jpg"]
 			} else {
-				goodsDetailGallery[i.Num-1] = picDir + "/" + imageDir + "/" + i.FileName + ".jpg"
+				goodsDetailGallery[i.Num-1] = imageMap[picDir+"/"+imageDir+"/"+i.FileName+".jpg"]
 			}
 		}
 		for _, i := range goodsConfig.CarouselGalleryConfigList {
-			goodsCarouselGallery[i.Num-1] = picDir + "/" + imageDir + "/" + i.FileName + ".jpg"
+			goodsCarouselGallery[i.Num-1] = imageMap[picDir+"/"+imageDir+"/"+i.FileName+".jpg"]
+		}
+		for _, i := range goodsConfig.SkuConfigList {
+			goodsSkulGallery[i.Num-1] = imageMap[picDir+"/"+imageDir+"/"+i.FileName+".jpg"]
 		}
 		goods = append(goods, Goods{
 			CatId:           1234,
@@ -91,7 +136,35 @@ func (s *ShowInput) GetGoods() (goods []Goods, err error) {
 			IsLowPrice:      isLowPrice,
 			DetailGallery:   goodsDetailGallery,
 			CarouselGallery: goodsCarouselGallery,
+			SkuGallery:      goodsSkulGallery,
 		})
 	}
 	return goods, nil
+}
+
+func (s *ShowInput) UploadImage() (err error) {
+	imageList, err := s.GetImage()
+	if err != nil {
+		return err
+	}
+	var syncMap sync.Map
+	var wg sync.WaitGroup
+	for _, i := range imageList {
+		_, ok := syncMap.Load(i)
+		if !ok {
+			go client.UploadImage(i, &wg, &syncMap)
+		}
+	}
+	wg.Wait()
+	imageMap := make(map[string]string)
+	// Range遍历所有sync.Map中的键值对
+	syncMap.Range(func(k, v interface{}) bool {
+		imageMap[k.(string)] = v.(string)
+		return true
+	})
+	// 创建文件
+	if err = common.CreateJson(s.UploadedImage.Text, imageMap); err != nil {
+		return err
+	}
+	return nil
 }

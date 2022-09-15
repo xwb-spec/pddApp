@@ -8,127 +8,127 @@ import (
 
 func (s *ShowInput) CheckInput() {
 	// 检测登录信息
-	if s.ShopId.Text == "" {
+	if s.MallId.Text == "" {
 		s.ConsoleResult.SetText("[ERROR]: 店铺id为空,请输入店铺id")
 		return
 	}
-	if s.ShopName.Text == "" {
+	if s.MallName.Text == "" {
 		s.ConsoleResult.SetText("[ERROR]: 店铺名为空,请输入店铺名")
 		return
 	}
 	// 检测店铺模板
-	if s.FreightTmp.Selected == "" {
+	if s.LogisticsTemp.Selected == "" {
 		s.ConsoleResult.SetText("[ERROR]: 运费模板为空,请输入运费模板")
 		return
 	}
 	// 检测公用图片
-	if s.PubFileDir.Text == "" {
-		s.ConsoleResult.SetText("[ERROR]: 公用文件目录为空,请选择或输入公用文件目录" + s.PubFileDir.Text)
+	if s.PublicDir.Text == "" {
+		s.ConsoleResult.SetText("[ERROR]: 公用文件目录为空,请选择或输入公用文件目录" + s.PublicDir.Text)
 		return
 	}
-	isPathExist, err := common.IsPathExists(s.PubFileDir.Text)
+	isPathExist, err := common.IsPathExists(s.PublicDir.Text)
 	if err != nil {
 		s.ConsoleResult.SetText("[ERROR]: 公用文件目录出错, %s" + err.Error())
 		return
 	}
 	if !isPathExist {
-		s.ConsoleResult.SetText("[ERROR]: 公用文件目录出错,公用文件目录不存在" + s.PubFileDir.Text)
+		s.ConsoleResult.SetText("[ERROR]: 公用文件目录出错,公用文件目录不存在" + s.PublicDir.Text)
 		return
 	}
 	// 检测套图
-	if s.PicKitDir.Text == "" {
-		s.ConsoleResult.SetText("[ERROR]: 套图文件目录为空,请选择或输入套图文件目录" + s.PicKitDir.Text)
+	if s.ImageDir.Text == "" {
+		s.ConsoleResult.SetText("[ERROR]: 套图文件目录为空,请选择或输入套图文件目录" + s.ImageDir.Text)
 		return
 	}
-	isPathExist, err = common.IsPathExists(s.PicKitDir.Text)
+	isPathExist, err = common.IsPathExists(s.ImageDir.Text)
 	if err != nil {
 		s.ConsoleResult.SetText("[ERROR]: 套图文件目录出错, %s" + err.Error())
 		return
 	}
 	if !isPathExist {
-		s.ConsoleResult.SetText("[ERROR]: 套图文件目录出错,套图文件目录不存在" + s.PubFileDir.Text)
+		s.ConsoleResult.SetText("[ERROR]: 套图文件目录出错,套图文件目录不存在" + s.PublicDir.Text)
 		return
 	}
 	// 检测配置文件路径
-	if s.UploadedImageConfig.Text == "" {
-		s.ConsoleResult.SetText("[ERROR]: 已上传图片文件配置为空,请选择或输入已上传图片文件配置" + s.UploadedImageConfig.Text)
+	if s.UploadedImage.Text == "" {
+		s.ConsoleResult.SetText("[ERROR]: 已上传图片文件配置为空,请选择或输入已上传图片文件配置" + s.UploadedImage.Text)
 		return
 	}
-	isPathExist, err = common.IsPathExists(s.UploadedImageConfig.Text)
+	isPathExist, err = common.IsPathExists(s.UploadedImage.Text)
 	if err != nil {
 		s.ConsoleResult.SetText("[ERROR]: 已上传图片文件配置出错, %s" + err.Error())
 		return
 	}
 	if !isPathExist {
-		s.ConsoleResult.SetText("[ERROR]: 已上传图片文件配置出错,已上传图片文件配置不存在" + s.UploadedImageConfig.Text)
+		s.ConsoleResult.SetText("[ERROR]: 已上传图片文件配置出错,已上传图片文件配置不存在" + s.UploadedImage.Text)
 		return
 	}
 	// 检测商品配置表
-	if s.ShopExcel.Text == "" {
-		s.ConsoleResult.SetText("[ERROR]: 商品配置表为空,请选择或输入商品配置表" + s.ShopExcel.Text)
+	if s.GoodsExcel.Text == "" {
+		s.ConsoleResult.SetText("[ERROR]: 商品配置表为空,请选择或输入商品配置表" + s.GoodsExcel.Text)
 		return
 	}
-	isPathExist, err = common.IsPathExists(s.ShopExcel.Text)
+	isPathExist, err = common.IsPathExists(s.GoodsExcel.Text)
 	if err != nil {
 		s.ConsoleResult.SetText("[ERROR]: 商品配置表出错, %s" + err.Error())
 		return
 	}
 	if !isPathExist {
-		s.ConsoleResult.SetText("[ERROR]: 商品配置表出错,商品配置表不存在" + s.ShopExcel.Text)
+		s.ConsoleResult.SetText("[ERROR]: 商品配置表出错,商品配置表不存在" + s.GoodsExcel.Text)
 		return
 	}
 	// 检测sku配置表
-	if s.SkuExcel.Text == "" {
-		s.ConsoleResult.SetText("[ERROR]: sku配置表为空,请选择或输入sku配置表" + s.SkuExcel.Text)
+	if s.SkuConfigExcel.Text == "" {
+		s.ConsoleResult.SetText("[ERROR]: sku配置表为空,请选择或输入sku配置表" + s.SkuConfigExcel.Text)
 		return
 	}
-	isPathExist, err = common.IsPathExists(s.SkuExcel.Text)
+	isPathExist, err = common.IsPathExists(s.SkuConfigExcel.Text)
 	if err != nil {
 		s.ConsoleResult.SetText("[ERROR]: sku配置表出错, %s" + err.Error())
 		return
 	}
 	if !isPathExist {
-		s.ConsoleResult.SetText("[ERROR]: sku配置表出错,sku配置表不存在" + s.SkuExcel.Text)
+		s.ConsoleResult.SetText("[ERROR]: sku配置表出错,sku配置表不存在" + s.SkuConfigExcel.Text)
 		return
 	}
 	// 检测型号配置表
-	if s.ModelExcel.Text == "" {
-		s.ConsoleResult.SetText("[ERROR]: 型号对照配置表为空,请选择或输入型号对照配置表" + s.ModelExcel.Text)
+	if s.ModelImageExcel.Text == "" {
+		s.ConsoleResult.SetText("[ERROR]: 型号对照配置表为空,请选择或输入型号对照配置表" + s.ModelImageExcel.Text)
 		return
 	}
-	isPathExist, err = common.IsPathExists(s.ModelExcel.Text)
+	isPathExist, err = common.IsPathExists(s.ModelImageExcel.Text)
 	if err != nil {
 		s.ConsoleResult.SetText("[ERROR]: 型号对照配置表出错, %s" + err.Error())
 		return
 	}
 	if !isPathExist {
-		s.ConsoleResult.SetText("[ERROR]: 型号对照配置表出错,型号对照配置表不存在" + s.ModelExcel.Text)
+		s.ConsoleResult.SetText("[ERROR]: 型号对照配置表出错,型号对照配置表不存在" + s.ModelImageExcel.Text)
 		return
 	}
 	// 检测表单
-	if s.ShopSheetName.Text == "" {
+	if s.GoodsSheetName.Text == "" {
 		s.ConsoleResult.SetText("[ERROR]: 商品配置表表单为空,请填写")
 		return
 	} else {
-		if !common.IsSheetExists(s.ShopExcel.Text, s.ShopSheetName.Text) {
+		if !common.IsSheetExists(s.GoodsExcel.Text, s.GoodsSheetName.Text) {
 			s.ConsoleResult.SetText("[ERROR]: 商品配置表表单不存在,请检查商品表单")
 			return
 		}
 	}
-	if s.ModelSheetName.Text == "" {
+	if s.ModelImageSheetName.Text == "" {
 		s.ConsoleResult.SetText("[ERROR]: 型号对照表表单为空, 请填写")
 		return
 	} else {
-		if !common.IsSheetExists(s.ModelExcel.Text, s.ModelSheetName.Text) {
+		if !common.IsSheetExists(s.ModelImageExcel.Text, s.ModelImageSheetName.Text) {
 			s.ConsoleResult.SetText("[ERROR]: 型号对照表表单不存在,请检查型号对照表表单")
 			return
 		}
 	}
-	if s.SkuSheetName.Text == "" {
+	if s.SkuConfigSheetName.Text == "" {
 		s.ConsoleResult.SetText("[ERROR]: sku配置表表单为空,请填写")
 		return
 	} else {
-		if !common.IsSheetExists(s.SkuExcel.Text, s.SkuSheetName.Text) {
+		if !common.IsSheetExists(s.SkuConfigExcel.Text, s.SkuConfigSheetName.Text) {
 			s.ConsoleResult.SetText("[ERROR]: sku配置表表单不存在,请检查sku配置表表单")
 			return
 		}
@@ -137,7 +137,7 @@ func (s *ShowInput) CheckInput() {
 		s.ConsoleResult.SetText("[ERROR]: 属性配置表表单为空,请填写")
 		return
 	} else {
-		if !common.IsSheetExists(s.SkuExcel.Text, s.AttrSheetName.Text) {
+		if !common.IsSheetExists(s.SkuConfigExcel.Text, s.AttrSheetName.Text) {
 			s.ConsoleResult.SetText("[ERROR]: 属性配置表表单不存在,请检查属性配置表表单")
 			return
 		}
@@ -147,19 +147,19 @@ func (s *ShowInput) CheckInput() {
 
 // 检查套图
 func (s *ShowInput) CheckImagePath() {
-	goodsMap, err := common.GetGoodsMap(s.ShopExcel.Text, s.ShopSheetName.Text)
+	goodsMap, err := common.GetGoodsMap(s.GoodsExcel.Text, s.GoodsSheetName.Text)
 	if err != nil {
-		s.ConsoleResult.SetText(fmt.Sprintf("[ERROR]: 读取商品表格数据失败, %s", s.ShopExcel.Text))
+		s.ConsoleResult.SetText(fmt.Sprintf("[ERROR]: 读取商品表格数据失败, %s", s.GoodsExcel.Text))
 		return
 	}
-	goodsImageMap, err := common.GetGoodsComparison(s.ModelExcel.Text, s.ModelSheetName.Text)
+	goodsImageMap, err := common.GetGoodsComparison(s.ModelImageExcel.Text, s.ModelImageSheetName.Text)
 	if err != nil {
-		s.ConsoleResult.SetText(fmt.Sprintf("[ERROR]: 读取型号图片对照表格数据失败, %s", s.ModelExcel.Text))
+		s.ConsoleResult.SetText(fmt.Sprintf("[ERROR]: 读取型号图片对照表格数据失败, %s", s.ModelImageExcel.Text))
 		return
 	}
-	goodsConfig, err := common.GetGoodsConfig(s.SkuExcel.Text, s.SkuSheetName.Text)
+	goodsConfig, err := common.GetGoodsConfig(s.SkuConfigExcel.Text, s.SkuConfigSheetName.Text)
 	if err != nil {
-		s.ConsoleResult.SetText(fmt.Sprintf("[ERROR]: 读取sku配置表格数据失败, %s", s.ModelExcel.Text))
+		s.ConsoleResult.SetText(fmt.Sprintf("[ERROR]: 读取sku配置表格数据失败, %s", s.ModelImageExcel.Text))
 		return
 	}
 	for _, v := range goodsMap {
@@ -169,7 +169,7 @@ func (s *ShowInput) CheckImagePath() {
 			key := strings.ToLower(d.Model)
 			val, ok := goodsImageMap[key] // 从map查找图片目录是否存在
 			if ok {
-				is, _ := common.IsPathExists(s.PicKitDir.Text + "/" + value)
+				is, _ := common.IsPathExists(s.ImageDir.Text + "/" + value)
 				if is {
 					isExists = true
 					value = *val.PicDir
@@ -178,10 +178,10 @@ func (s *ShowInput) CheckImagePath() {
 			}
 		}
 		if !isExists {
-			s.ConsoleResult.SetText(fmt.Sprintf("[ERROR] :商品[%s]对应的图片目录不存在", s.PicKitDir.Text+"/"+value))
+			s.ConsoleResult.SetText(fmt.Sprintf("[ERROR] :商品[%s]对应的图片目录不存在", s.ImageDir.Text+"/"+value))
 			return
 		} else {
-			imageDir := s.PicKitDir.Text + "/" + value
+			imageDir := s.ImageDir.Text + "/" + value
 			for _, d := range goodsConfig.DetailGalleryConfigList { // 检查详情图是否完全
 				if !d.IsPublic { // 不是处理公用图
 					imagePath := imageDir + "/" + d.FileName + ".jpg"
@@ -195,13 +195,13 @@ func (s *ShowInput) CheckImagePath() {
 						return
 					}
 				} else { // 公用图
-					b, err := common.IsPathExists(s.PubFileDir.Text + "/" + d.FileName + ".jpg")
+					b, err := common.IsPathExists(s.PublicDir.Text + "/" + d.FileName + ".jpg")
 					if err != nil {
 						s.ConsoleResult.SetText(fmt.Sprintf("[ERROR]: 公用图[%s]", err))
 						return
 					}
 					if !b {
-						s.ConsoleResult.SetText(fmt.Sprintf("[ERROR]: 公用图[%s]不存在", s.PubFileDir.Text+"/"+d.FileName+".jpg"))
+						s.ConsoleResult.SetText(fmt.Sprintf("[ERROR]: 公用图[%s]不存在", s.PublicDir.Text+"/"+d.FileName+".jpg"))
 						return
 					}
 				}
@@ -241,7 +241,7 @@ func (s *ShowInput) CheckImagePath() {
 
 // 检查配置
 func (s *ShowInput) CheckConfig() {
-	goodsConfig, err := common.GetGoodsConfig(s.SkuExcel.Text, s.SkuSheetName.Text)
+	goodsConfig, err := common.GetGoodsConfig(s.SkuConfigExcel.Text, s.SkuConfigSheetName.Text)
 	if err != nil {
 		s.ConsoleResult.SetText(fmt.Sprintf("[ERROR]: 读取sku配置表数据失败, %s", err.Error()))
 		return

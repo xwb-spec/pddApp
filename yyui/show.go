@@ -2,7 +2,6 @@ package yyui
 
 import (
 	"encoding/json"
-	"fmt"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
@@ -17,18 +16,18 @@ import (
 
 type ShowInput struct {
 	Win                 fyne.Window
-	ShopName            *widget.Entry  // 店铺名
-	ShopId              *widget.Entry  // 店铺id
-	FreightTmp          *widget.Select // 运费模板
-	PicKitDir           *widget.Entry  // 套图文件目录
-	PubFileDir          *widget.Entry  // 公共文件目录
-	UploadedImageConfig *widget.Entry  // 已上传图片文件配置
-	ShopExcel           *widget.Entry  //商品配置表
-	SkuExcel            *widget.Entry  // sku配置表
-	ModelExcel          *widget.Entry  //型号对照表
-	ShopSheetName       *widget.Entry  // 商品表单名
-	SkuSheetName        *widget.Entry  // sku表单名
-	ModelSheetName      *widget.Entry  //型号对照表单名
+	MallName            *widget.Entry  // 店铺名
+	MallId              *widget.Entry  // 店铺id
+	LogisticsTemp       *widget.Select // 运费模板
+	ImageDir            *widget.Entry  // 套图文件目录
+	PublicDir           *widget.Entry  // 公共文件目录
+	UploadedImage       *widget.Entry  // 已上传图片文件配置
+	GoodsExcel          *widget.Entry  //商品配置表
+	SkuConfigExcel      *widget.Entry  // sku配置表
+	ModelImageExcel     *widget.Entry  //型号对照表
+	GoodsSheetName      *widget.Entry  // 商品表单名
+	SkuConfigSheetName  *widget.Entry  // sku表单名
+	ModelImageSheetName *widget.Entry  //型号对照表单名
 	AttrSheetName       *widget.Entry  // 属性表单名
 	SkuCombType         *widget.Select // sku组合类型
 	SkuSortType         *widget.Select //sku排序类型
@@ -41,12 +40,12 @@ type ShowInput struct {
 func (s *ShowInput) LoginContainer() *fyne.Container {
 	// 登录框
 	loginShopNameLabel := widget.NewLabel("店铺名")
-	s.ShopName = widget.NewEntry()
+	s.MallName = widget.NewEntry()
 	loginShopIdLabel := widget.NewLabel("店铺id")
-	s.ShopId = widget.NewEntry()
-	loginButton := widget.NewButton("登录", func() { // //回调函数
+	s.MallId = widget.NewEntry()
+	loginButton := widget.NewButton("扫码", func() { // //回调函数
 		makeQRCode := client.QRCodeRequestParam{
-			Path: "/Users/machao/OptRepo/GolandProjects/awesomeProject/learning-golang/pddApp/qrcode.png",
+			Path: "./qrcode.png",
 		}
 		makeQRCode.MakeQRCode()
 		image := canvas.NewImageFromFile(makeQRCode.Path)
@@ -56,26 +55,26 @@ func (s *ShowInput) LoginContainer() *fyne.Container {
 		win.Resize(fyne.NewSize(300, 300))
 		win.Show()
 	})
-	return container.New(layout.NewGridLayout(5), loginShopNameLabel, s.ShopName, loginShopIdLabel, s.ShopId, loginButton)
+	return container.New(layout.NewGridLayout(5), loginShopNameLabel, s.MallName, loginShopIdLabel, s.MallId, loginButton)
 }
 
-func (s *ShowInput) FreightTmpContainer() *fyne.Container {
+func (s *ShowInput) LogisticsTempContainer() *fyne.Container {
 	// 运费模板
 	freightTmpNameLabel := widget.NewLabel("运费模板")
-	options := []string{"1", "3"}
-	s.FreightTmp = widget.NewSelect(options, func(s string) {
-		fmt.Println("选择")
+	options := []string{"模板1", "模板2"}
+	s.LogisticsTemp = widget.NewSelect(options, func(s string) {
+		log.Println(s)
 	})
 	freightRefreshButton := widget.NewButton("刷新", func() {
-		fmt.Println("开始刷新")
+		s.LogisticsTemp.Refresh()
 	})
-	return container.NewBorder(layout.NewSpacer(), layout.NewSpacer(), freightTmpNameLabel, freightRefreshButton, s.FreightTmp)
+	return container.NewBorder(layout.NewSpacer(), layout.NewSpacer(), freightTmpNameLabel, freightRefreshButton, s.LogisticsTemp)
 }
 
-func (s *ShowInput) PicKitDirContainer() *fyne.Container {
+func (s *ShowInput) ImageDirContainer() *fyne.Container {
 	// 套图文件目录
 	picKitDirLabel := widget.NewLabel("套图文件目录")
-	s.PicKitDir = widget.NewEntry()
+	s.ImageDir = widget.NewEntry()
 	picKitDirButton := widget.NewButton("...", func() {
 		dialog.ShowFolderOpen(func(list fyne.ListableURI, err error) {
 			if err != nil {
@@ -87,16 +86,16 @@ func (s *ShowInput) PicKitDirContainer() *fyne.Container {
 				return
 			}
 			//设置输入框内容
-			s.PicKitDir.SetText(list.Path())
+			s.ImageDir.SetText(list.Path())
 		}, s.Win)
 	})
-	return container.NewBorder(layout.NewSpacer(), layout.NewSpacer(), picKitDirLabel, picKitDirButton, s.PicKitDir)
+	return container.NewBorder(layout.NewSpacer(), layout.NewSpacer(), picKitDirLabel, picKitDirButton, s.ImageDir)
 }
 
 func (s *ShowInput) PublicDirContainer() *fyne.Container {
 	// 公共文件目录
 	publicDirLabel := widget.NewLabel("公共文件目录")
-	s.PubFileDir = widget.NewEntry()
+	s.PublicDir = widget.NewEntry()
 	publicDirButton := widget.NewButton("...", func() {
 		dialog.ShowFolderOpen(func(list fyne.ListableURI, err error) {
 			if err != nil {
@@ -108,16 +107,16 @@ func (s *ShowInput) PublicDirContainer() *fyne.Container {
 				return
 			}
 			//设置输入框内容
-			s.PubFileDir.SetText(list.Path())
+			s.PublicDir.SetText(list.Path())
 		}, s.Win)
 	})
-	return container.NewBorder(layout.NewSpacer(), layout.NewSpacer(), publicDirLabel, publicDirButton, s.PubFileDir)
+	return container.NewBorder(layout.NewSpacer(), layout.NewSpacer(), publicDirLabel, publicDirButton, s.PublicDir)
 }
 
-func (s *ShowInput) UploadedPicFileContainer() *fyne.Container {
+func (s *ShowInput) UploadedImageContainer() *fyne.Container {
 	// 已上传文件配置
 	uploadedPicFileLabel := widget.NewLabel("已上传图片文件配置")
-	s.UploadedImageConfig = widget.NewEntry()
+	s.UploadedImage = widget.NewEntry()
 	uploadedPicFileButton := widget.NewButton("...", func() {
 		fd := dialog.NewFileOpen(func(reader fyne.URIReadCloser, err error) {
 			if err != nil {
@@ -128,18 +127,18 @@ func (s *ShowInput) UploadedPicFileContainer() *fyne.Container {
 				log.Println("Cancelled")
 				return
 			}
-			s.UploadedImageConfig.SetText(reader.URI().Path()) //把读取到的路径显示到输入框中
+			s.UploadedImage.SetText(reader.URI().Path()) //把读取到的路径显示到输入框中
 		}, s.Win)
 		fd.SetFilter(storage.NewExtensionFileFilter([]string{".json"})) //打开的文件格式类型
 		fd.Show()
 	})
-	return container.NewBorder(layout.NewSpacer(), layout.NewSpacer(), uploadedPicFileLabel, uploadedPicFileButton, s.UploadedImageConfig)
+	return container.NewBorder(layout.NewSpacer(), layout.NewSpacer(), uploadedPicFileLabel, uploadedPicFileButton, s.UploadedImage)
 }
 
-func (s *ShowInput) ShopExcelContainer() *fyne.Container {
+func (s *ShowInput) GoodsExcelContainer() *fyne.Container {
 	// 商品配置表
 	shopExcelLabel := widget.NewLabel("商品配置表")
-	s.ShopExcel = widget.NewEntry()
+	s.GoodsExcel = widget.NewEntry()
 	shopExcelButton := widget.NewButton("...", func() {
 		fd := dialog.NewFileOpen(func(reader fyne.URIReadCloser, err error) {
 			if err != nil {
@@ -150,17 +149,17 @@ func (s *ShowInput) ShopExcelContainer() *fyne.Container {
 				log.Println("Cancelled")
 				return
 			}
-			s.ShopExcel.SetText(reader.URI().Path()) //把读取到的路径显示到输入框中
+			s.GoodsExcel.SetText(reader.URI().Path()) //把读取到的路径显示到输入框中
 		}, s.Win)
 		fd.SetFilter(storage.NewExtensionFileFilter([]string{".xlsx"})) //打开的文件格式类型
 		fd.Show()
 	})
-	return container.NewBorder(layout.NewSpacer(), layout.NewSpacer(), shopExcelLabel, shopExcelButton, s.ShopExcel)
+	return container.NewBorder(layout.NewSpacer(), layout.NewSpacer(), shopExcelLabel, shopExcelButton, s.GoodsExcel)
 }
 func (s *ShowInput) SkuExcelContainer() *fyne.Container {
 	// sku配置表
 	skuExcelLabel := widget.NewLabel("sku配置表")
-	s.SkuExcel = widget.NewEntry()
+	s.SkuConfigExcel = widget.NewEntry()
 	skuExcelButton := widget.NewButton("...", func() {
 		fd := dialog.NewFileOpen(func(reader fyne.URIReadCloser, err error) {
 			if err != nil {
@@ -171,17 +170,17 @@ func (s *ShowInput) SkuExcelContainer() *fyne.Container {
 				log.Println("Cancelled")
 				return
 			}
-			s.SkuExcel.SetText(reader.URI().Path()) //把读取到的路径显示到输入框中
+			s.SkuConfigExcel.SetText(reader.URI().Path()) //把读取到的路径显示到输入框中
 		}, s.Win)
 		fd.SetFilter(storage.NewExtensionFileFilter([]string{".xlsx"})) //打开的文件格式类型
 		fd.Show()
 	})
-	return container.NewBorder(layout.NewSpacer(), layout.NewSpacer(), skuExcelLabel, skuExcelButton, s.SkuExcel)
+	return container.NewBorder(layout.NewSpacer(), layout.NewSpacer(), skuExcelLabel, skuExcelButton, s.SkuConfigExcel)
 }
-func (s *ShowInput) ModelExcelContainer() *fyne.Container {
+func (s *ShowInput) ModelImageExcelContainer() *fyne.Container {
 	// 型号对照表
 	modelExcelLabel := widget.NewLabel("型号对照表")
-	s.ModelExcel = widget.NewEntry()
+	s.ModelImageExcel = widget.NewEntry()
 	modelExcelButton := widget.NewButton("...", func() {
 		fd := dialog.NewFileOpen(func(reader fyne.URIReadCloser, err error) {
 			if err != nil {
@@ -192,34 +191,34 @@ func (s *ShowInput) ModelExcelContainer() *fyne.Container {
 				log.Println("Cancelled")
 				return
 			}
-			s.ModelExcel.SetText(reader.URI().Path()) //把读取到的路径显示到输入框中
+			s.ModelImageExcel.SetText(reader.URI().Path()) //把读取到的路径显示到输入框中
 		}, s.Win)
 		fd.SetFilter(storage.NewExtensionFileFilter([]string{".xlsx"})) //打开的文件格式类型
 		fd.Show()
 	})
-	return container.NewBorder(layout.NewSpacer(), layout.NewSpacer(), modelExcelLabel, modelExcelButton, s.ModelExcel)
+	return container.NewBorder(layout.NewSpacer(), layout.NewSpacer(), modelExcelLabel, modelExcelButton, s.ModelImageExcel)
 }
 func (s *ShowInput) Sheet1Container() *fyne.Container {
 	// 商品表表单
 	shopSheetLabel := widget.NewLabel("商品表表单名")
-	s.ShopSheetName = widget.NewEntry()
-	s.ShopSheetName.SetText("苹果")
+	s.GoodsSheetName = widget.NewEntry()
+	s.GoodsSheetName.SetText("苹果")
 	// sku配置表表单
 	skuSheetLabel := widget.NewLabel("sku配置表表单名")
-	s.SkuSheetName = widget.NewEntry()
-	s.SkuSheetName.SetText("配置")
-	return container.New(layout.NewGridLayout(4), shopSheetLabel, s.ShopSheetName, skuSheetLabel, s.SkuSheetName)
+	s.SkuConfigSheetName = widget.NewEntry()
+	s.SkuConfigSheetName.SetText("配置")
+	return container.New(layout.NewGridLayout(4), shopSheetLabel, s.GoodsSheetName, skuSheetLabel, s.SkuConfigSheetName)
 }
 func (s *ShowInput) Sheet2Container() *fyne.Container {
 	// 型号对照表表单
 	modelSheetLabel := widget.NewLabel("型号对照表表单名")
-	s.ModelSheetName = widget.NewEntry()
-	s.ModelSheetName.SetText("型号")
+	s.ModelImageSheetName = widget.NewEntry()
+	s.ModelImageSheetName.SetText("直边tpu")
 	// 属性表表单
 	attrSheetLabel := widget.NewLabel("属性表表单名")
 	s.AttrSheetName = widget.NewEntry()
 	s.AttrSheetName.SetText("属性")
-	return container.New(layout.NewGridLayout(4), modelSheetLabel, s.ModelSheetName, attrSheetLabel, s.AttrSheetName)
+	return container.New(layout.NewGridLayout(4), modelSheetLabel, s.ModelImageSheetName, attrSheetLabel, s.AttrSheetName)
 }
 func (s *ShowInput) SelectContainer() *fyne.Container {
 	skuCombTypeLabel := widget.NewLabel("型号对照表组合类型")
@@ -282,13 +281,13 @@ func (s *ShowInput) MainShow(w fyne.Window) {
 	s.Win = w
 	box := container.NewVBox(
 		s.LoginContainer(),
-		s.FreightTmpContainer(),
+		s.LogisticsTempContainer(),
 		s.PublicDirContainer(),
-		s.PicKitDirContainer(),
-		s.UploadedPicFileContainer(),
-		s.ShopExcelContainer(),
+		s.ImageDirContainer(),
+		s.UploadedImageContainer(),
+		s.GoodsExcelContainer(),
 		s.SkuExcelContainer(),
-		s.ModelExcelContainer(),
+		s.ModelImageExcelContainer(),
 		s.Sheet1Container(),
 		s.Sheet2Container(),
 		s.SelectContainer(),

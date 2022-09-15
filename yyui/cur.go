@@ -1,24 +1,23 @@
 package yyui
 
 import (
-	"encoding/json"
 	"log"
-	"os"
+	"pddApp/common"
 )
 
 type CurInput struct {
-	ShopName            string `json:"ShopName"`            // 店铺名
-	ShopId              string `json:"ShopId"`              // 店铺id
-	FreightTmp          string `json:"FreightTmp"`          // 运费模板
-	PicKitDir           string `json:"PicKitDir"`           // 套图文件目录
-	PubFileDir          string `json:"PubFileDir"`          // 公共文件目录
-	UploadedImageConfig string `json:"UploadedImageConfig"` // 已上传图片文件配置
-	ShopExcel           string `json:"ShopExcel"`           //商品配置表
-	SkuExcel            string `json:"SkuExcel"`            // sku配置表
-	ModelExcel          string `json:"ModelExcel"`          //型号对照表
-	ShopSheetName       string `json:"ShopSheetName"`       // 商品表单名
-	SkuSheetName        string `json:"SkuSheetName"`        // sku表单名
-	ModelSheetName      string `json:"ModelSheetName"`      //型号对照表单名
+	MallName            string `json:"MallName"`            // 店铺名
+	MallId              string `json:"MallId"`              // 店铺id
+	LogisticsTemp       string `json:"LogisticsTemp"`       // 运费模板
+	ImageDir            string `json:"ImageDir"`            // 套图文件目录
+	PublicDir           string `json:"PublicDir"`           // 公共文件目录
+	UploadedImage       string `json:"UploadedImage"`       // 已上传图片文件配置
+	GoodsExcel          string `json:"GoodsExcel"`          //商品配置表
+	SkuConfigExcel      string `json:"SkuConfigExcel"`      // sku配置表
+	ModelImageExcel     string `json:"ModelImageExcel"`     //型号对照表
+	GoodsSheetName      string `json:"GoodsSheetName"`      // 商品表单名
+	SkuConfigSheetName  string `json:"SkuConfigSheetName"`  // sku表单名
+	ModelImageSheetName string `json:"ModelImageSheetName"` //型号对照表单名
 	AttrSheetName       string `json:"AttrSheetName"`       // 属性表单名
 	SkuCombType         string `json:"SkuCombType"`         // 型号对照表组合类型
 	SkuSortType         string `json:"SkuSortType"`         //型号排序类型
@@ -29,18 +28,18 @@ type CurInput struct {
 
 func (s *ShowInput) SaveInput() {
 	curInput := CurInput{
-		ShopName:            s.ShopName.Text,
-		ShopId:              s.ShopId.Text,
-		FreightTmp:          s.FreightTmp.Selected,
-		PicKitDir:           s.PicKitDir.Text,
-		PubFileDir:          s.PubFileDir.Text,
-		UploadedImageConfig: s.UploadedImageConfig.Text,
-		ShopExcel:           s.ShopExcel.Text,
-		SkuExcel:            s.SkuExcel.Text,
-		ModelExcel:          s.ModelExcel.Text,
-		ShopSheetName:       s.ShopSheetName.Text,
-		SkuSheetName:        s.SkuSheetName.Text,
-		ModelSheetName:      s.ModelSheetName.Text,
+		MallName:            s.MallName.Text,
+		MallId:              s.MallId.Text,
+		LogisticsTemp:       s.LogisticsTemp.Selected,
+		ImageDir:            s.ImageDir.Text,
+		PublicDir:           s.PublicDir.Text,
+		UploadedImage:       s.UploadedImage.Text,
+		GoodsExcel:          s.GoodsExcel.Text,
+		SkuConfigExcel:      s.SkuConfigExcel.Text,
+		ModelImageExcel:     s.ModelImageExcel.Text,
+		GoodsSheetName:      s.GoodsSheetName.Text,
+		SkuConfigSheetName:  s.SkuConfigSheetName.Text,
+		ModelImageSheetName: s.ModelImageSheetName.Text,
 		AttrSheetName:       s.AttrSheetName.Text,
 		SkuCombType:         s.SkuCombType.Selected,
 		SkuSortType:         s.SkuSortType.Selected,
@@ -48,49 +47,28 @@ func (s *ShowInput) SaveInput() {
 		IsSubmit:            s.IsSubmit.Checked,
 		IsOnline:            s.IsOnline.Checked,
 	}
-	// 创建文件
-	filePtr, err := os.Create("./acc.json")
-	if err != nil {
-		log.Println("文件创建失败 [ERROR]: " + err.Error())
-		return
-	}
-	defer filePtr.Close()
-	// 创建Json编码器
-	encoder := json.NewEncoder(filePtr)
-	err = encoder.Encode(curInput)
-	if err != nil {
+	if err := common.CreateJson("./acc.json", curInput); err != nil {
 		log.Println("acc.json保存错误", err.Error())
-	} else {
-		log.Println("acc.json保存成功")
 	}
 }
 func (s *ShowInput) GetInput() {
-	filePtr, err := os.Open("./acc.json")
-	if err != nil {
-		log.Println("文件打开失败 [ERROR]: " + err.Error())
-		return
-	}
-	defer filePtr.Close()
 	var curInput CurInput
-	// 创建json解码器
-	decoder := json.NewDecoder(filePtr)
-	err = decoder.Decode(&curInput)
-	if err != nil {
+	if err := common.LoadJson("./acc.json", &curInput); err != nil {
 		log.Println("读取acc.json失败", err.Error())
 	} else {
 		log.Println("读取acc.json成功")
-		s.ShopId.SetText(curInput.ShopId)
-		s.ShopName.SetText(curInput.ShopName)
-		s.FreightTmp.SetSelected(curInput.FreightTmp)
-		s.PicKitDir.SetText(curInput.PicKitDir)
-		s.PubFileDir.SetText(curInput.PubFileDir)
-		s.UploadedImageConfig.SetText(curInput.UploadedImageConfig)
-		s.ShopExcel.SetText(curInput.ShopExcel)
-		s.SkuExcel.SetText(curInput.SkuExcel)
-		s.ModelExcel.SetText(curInput.ModelExcel)
-		s.ShopSheetName.SetText(curInput.ShopSheetName)
-		s.SkuSheetName.SetText(curInput.SkuSheetName)
-		s.ModelSheetName.SetText(curInput.ModelSheetName)
+		s.MallId.SetText(curInput.MallId)
+		s.MallName.SetText(curInput.MallName)
+		s.LogisticsTemp.SetSelected(curInput.LogisticsTemp)
+		s.ImageDir.SetText(curInput.ImageDir)
+		s.PublicDir.SetText(curInput.PublicDir)
+		s.UploadedImage.SetText(curInput.UploadedImage)
+		s.GoodsExcel.SetText(curInput.GoodsExcel)
+		s.SkuConfigExcel.SetText(curInput.SkuConfigExcel)
+		s.ModelImageExcel.SetText(curInput.ModelImageExcel)
+		s.GoodsSheetName.SetText(curInput.GoodsSheetName)
+		s.SkuConfigSheetName.SetText(curInput.SkuConfigSheetName)
+		s.ModelImageSheetName.SetText(curInput.ModelImageSheetName)
 		s.AttrSheetName.SetText(curInput.AttrSheetName)
 		s.SkuCombType.SetSelected(curInput.SkuCombType)
 		s.SkuSortType.SetSelected(curInput.SkuSortType)

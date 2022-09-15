@@ -1,6 +1,7 @@
 package common
 
 import (
+	"encoding/json"
 	"github.com/xuri/excelize/v2"
 	"os"
 	"sort"
@@ -66,4 +67,33 @@ func SearchSheet(excelPath, sheetName, key string) (values []string, err error) 
 		}
 	}
 	return nil, err
+}
+
+func CreateJson(filename string, data interface{}) (err error) {
+	// 创建文件
+	f, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	// 创建Json编码器
+	encoder := json.NewEncoder(f)
+	if err = encoder.Encode(data); err != nil {
+		return err
+	}
+	return nil
+}
+
+func LoadJson(filename string, v interface{}) (err error) {
+	f, err := os.Open(filename)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	// 创建json解码器
+	decoder := json.NewDecoder(f)
+	if err = decoder.Decode(&v); err != nil {
+		return err
+	}
+	return nil
 }
