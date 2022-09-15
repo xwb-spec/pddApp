@@ -7,7 +7,7 @@ import (
 )
 
 // 获取token
-func UploadImage(imagePath string, wg *sync.WaitGroup, m *sync.Map) {
+func UploadImage(imagePath string, wg *sync.WaitGroup, m *sync.Map, ch chan struct{}) {
 	wg.Add(1)
 	defer wg.Done()
 	p := sdk.NewPdd(&sdk.Config{
@@ -21,4 +21,5 @@ func UploadImage(imagePath string, wg *sync.WaitGroup, m *sync.Map) {
 		log.Printf("上传失败%s", imagePath)
 	}
 	m.Store(imagePath, resp.ImageUrl)
+	<-ch
 }

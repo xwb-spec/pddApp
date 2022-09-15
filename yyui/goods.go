@@ -149,10 +149,14 @@ func (s *ShowInput) UploadImage() (err error) {
 	}
 	var syncMap sync.Map
 	var wg sync.WaitGroup
+	limit := 10
+	ch := make(chan struct{}, limit)
+	defer close(ch)
 	for _, i := range imageList {
 		_, ok := syncMap.Load(i)
 		if !ok {
-			go client.UploadImage(i, &wg, &syncMap)
+			ch <- struct{}{}
+			go client.UploadImage(i, &wg, &syncMap, ch)
 		}
 	}
 	wg.Wait()
