@@ -149,7 +149,7 @@ func (s *ShowInput) UploadImage() (err error) {
 	}
 	var syncMap sync.Map
 	var wg sync.WaitGroup
-	limit := 10
+	limit := 10 // 控制并发数
 	ch := make(chan struct{}, limit)
 	defer close(ch)
 	for _, i := range imageList {
