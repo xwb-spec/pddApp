@@ -10,6 +10,7 @@ import (
 var (
 	RedirectUri  = "https://cback.whitewolvesx.com:8088/api/v1/callback/"
 	Code         = ""
+	State        = ""
 	CliId        = "111"
 	CliSecret    string
 	AccessToken  string
@@ -60,15 +61,16 @@ func (g *TokenAPI) GetCode() {
 	_ = json.Unmarshal(bodyBytes, &r)
 	log.Println(r.Code)
 	Code = r.Code
+	State = r.State
 }
 
 func (g *TokenAPI) PopAuthTokenCreate() (resp *PopAuthTokenResponse, err error) {
 	g.GetCode()
-	log.Println(Code)
+	log.Println(State + "1111")
 	params := NewParamsWithType("pdd.pop.auth.token.create")
 	params.Set("code", Code)
 	params.Set("grant_type", "authorization_code")
-	params.Set("client_secret", "authorization_code")
+	params.Set("client_secret", CliSecret)
 	r, err := Call(g.Context, params)
 	if err != nil {
 		return
@@ -85,6 +87,7 @@ func (g *TokenAPI) PopAuthTokenCreate() (resp *PopAuthTokenResponse, err error) 
 func (g *TokenAPI) PopAuthTokenRefresh(refreshToken string) (resp *PopAuthTokenResponse, err error) {
 	params := NewParamsWithType("pdd.pop.auth.token.refresh")
 	params.Set("refresh_token", refreshToken)
+	params.Set("client_secret", CliSecret)
 	r, err := Call(g.Context, params)
 	if err != nil {
 		return
@@ -98,24 +101,21 @@ func (g *TokenAPI) PopAuthTokenRefresh(refreshToken string) (resp *PopAuthTokenR
 }
 
 // 获取token
-func PopAuthCreateToken() (err error) {
+func PopAuthCreateToken() (string, error) {
 	p := NewPdd(&Config{
 		ClientId:     CliId,
 		ClientSecret: CliSecret,
 		EndPoint:     "https://open-api.pinduoduo.com/oauth/token",
 		RetryTimes:   3, // 设置接口调用失败重试次数
 	})
-	if err != nil {
-		return
-	}
 	pdd := p.TokenAPI()
 	resp, err := pdd.PopAuthTokenCreate()
 	if err != nil {
-		return
+		return "", err
 	}
 	AccessToken = resp.AccessToken
 	RefreshToken = resp.RefreshToken
-	return nil
+	return State, nil
 }
 
 // 刷新token

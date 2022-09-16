@@ -35,10 +35,10 @@ type ReturnCodeResponse struct {
 }
 
 // 生成授权码,商家APP扫码授权
-func GenerateQRCode() {
+func GenerateQRCode(state string) {
 	if err := qrcode.WriteFile(fmt.Sprintf(
 		"https://mai.pinduoduo.com/h5-login.html?response_type=code&client_id=%s&redirect_uri=%s&state=%s&view=h5",
-		CliId, RedirectUri, "123456"), qrcode.Medium, 256, "./qrcode.png"); err != nil {
+		CliId, RedirectUri, state), qrcode.Medium, 256, "./qrcode.png"); err != nil {
 		log.Printf("[ERROR]: 生成二维码失败, %s\n", err)
 	}
 }
