@@ -4,7 +4,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"io/ioutil"
-	"log"
 )
 
 /* 图片上传接口,
@@ -14,14 +13,14 @@ import (
 //	ImageUploadResponse ImageUploadResponse `json:"goods_image_upload_response"`
 //}
 
-type ImageUploadResponse struct {
-	ImageUrl string `json:"image_url"`
-}
+//type ImageUploadResponse struct {
+//	ImageUrl string `json:"image_url"`
+//}
 
-func (g *GoodsAPI) GoodsImageUpload(imagePath string) (resp ImageUploadResponse, err error) {
+func (g *GoodsAPI) GoodsImageUpload(imagePath string) (imageUrl string, err error) {
 	srcByte, err := ioutil.ReadFile(imagePath)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 	base64Image := base64.StdEncoding.EncodeToString(srcByte)
 	params := NewParamsWithType("pdd.goods.image.upload")
@@ -30,7 +29,10 @@ func (g *GoodsAPI) GoodsImageUpload(imagePath string) (resp ImageUploadResponse,
 	if err != nil {
 		return
 	}
-	bytes, err := GetResponseBytes(r, "goods_image_upload_response")
-	json.Unmarshal(bytes, &resp)
-	return
+	bytes, err := GetResponseBytes(r, "goods_image_upload_response", "image_url")
+	err = json.Unmarshal(bytes, &imageUrl)
+	if err != nil {
+		return "", err
+	}
+	return imageUrl, nil
 }

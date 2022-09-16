@@ -16,7 +16,7 @@ func newTokenAPIWithContext(c *Context) *TokenAPI {
 	return &TokenAPI{Context: c}
 }
 
-type PopAuthTokenCreateResponse struct {
+type PopAuthTokenResponse struct {
 	AccessToken           string `json:"access_token"`
 	ExpiresAt             string `json:"expires_at"`
 	ExpiresIn             string `json:"expires_in"`
@@ -31,7 +31,7 @@ type PopAuthTokenCreateResponse struct {
 //	PopAuthTokenCreateResponse PopAuthTokenCreateResponse `json:"pop_auth_token_create_response"`
 //}
 
-func (g *TokenAPI) TokenGet(code string) (res *PopAuthTokenCreateResponse, err error) {
+func (g *TokenAPI) PopAuthTokenCreate(code string) (resp *PopAuthTokenResponse, err error) {
 	params := NewParamsWithType("pdd.pop.auth.token.create")
 	params.Set("code", code)
 	r, err := Call(g.Context, params)
@@ -39,6 +39,25 @@ func (g *TokenAPI) TokenGet(code string) (res *PopAuthTokenCreateResponse, err e
 		return
 	}
 	bytes, err := GetResponseBytes(r, "pop_auth_token_create_response")
-	json.Unmarshal(bytes, &res)
+	err = json.Unmarshal(bytes, &resp)
+	if err != nil {
+		return nil, err
+	}
+	return
+}
+
+// 刷新token
+func (g *TokenAPI) PopAuthTokenRefresh(refreshToken string) (resp *PopAuthTokenResponse, err error) {
+	params := NewParamsWithType("pdd.pop.auth.token.refresh")
+	params.Set("refresh_token", refreshToken)
+	r, err := Call(g.Context, params)
+	if err != nil {
+		return
+	}
+	bytes, err := GetResponseBytes(r, "pop_auth_token_refresh_response")
+	err = json.Unmarshal(bytes, &resp)
+	if err != nil {
+		return nil, err
+	}
 	return
 }

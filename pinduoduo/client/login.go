@@ -62,10 +62,13 @@ type ReturnCodeResponse struct {
 }
 
 // 生成授权码,商家APP扫码授权
-func (q *QRCodeRequestParam) MakeQRCode() {
-	qrcode.WriteFile(fmt.Sprintf(
+func (q *QRCodeRequestParam) GenerateQRCode() (err error) {
+	if err = qrcode.WriteFile(fmt.Sprintf(
 		"https://mai.pinduoduo.com/h5-login.html?response_type=code&client_id=%s&redirect_uri=%s&state=%s&view=h5",
-		q.ClientId, q.RedirectUri, q.State), qrcode.Medium, 256, q.Path)
+		q.ClientId, q.RedirectUri, q.State), qrcode.Medium, 256, q.Path); err != nil {
+		return err
+	}
+	return nil
 }
 
 // 获取返回码
@@ -97,8 +100,8 @@ func GetToken() string {
 	if err != nil {
 		log.Println(err)
 	}
-	pdd := p.GetTokenAPI()
-	resp, err := pdd.TokenGet(code.Code)
+	pdd := p.TokenAPI()
+	resp, err := pdd.PopAuthTokenCreate(code.Code)
 	if err != nil {
 		log.Println("获取token失败")
 	}

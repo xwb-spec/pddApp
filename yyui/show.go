@@ -43,12 +43,12 @@ func (s *ShowInput) LoginContainer() *fyne.Container {
 	s.MallName = widget.NewEntry()
 	loginShopIdLabel := widget.NewLabel("店铺id")
 	s.MallId = widget.NewEntry()
-	loginButton := widget.NewButton("扫码", func() { // //回调函数
-		makeQRCode := client.QRCodeRequestParam{
+	loginButton := widget.NewButton("二维码", func() { // //回调函数
+		c := client.QRCodeRequestParam{
 			Path: "./qrcode.png",
 		}
-		makeQRCode.MakeQRCode()
-		image := canvas.NewImageFromFile(makeQRCode.Path)
+		c.GenerateQRCode()
+		image := canvas.NewImageFromFile(c.Path)
 		image.FillMode = canvas.ImageFillOriginal
 		win := fyne.CurrentApp().NewWindow("扫码登录")
 		win.SetContent(image)

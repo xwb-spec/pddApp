@@ -19,6 +19,9 @@ func (g *GoodsAPI) GoodsAuthorizationCatGet(parentCatId int) (resp []*Category, 
 		return
 	}
 	bytes, err := GetResponseBytes(r, "goods_auth_cats_get_response", "goods_cats_list")
-	json.Unmarshal(bytes, &resp)
+	err = json.Unmarshal(bytes, &resp)
+	if err != nil {
+		return nil, err
+	}
 	return
 }

@@ -26,6 +26,9 @@ func (g *GoodsAPI) GoodsCatRuleGet(notMustparams ...Params) (resp []*RulePropert
 		return
 	}
 	bytes, err := GetResponseBytes(r, "cat_rule_get_response", "goods_properties_rule", "properties")
-	json.Unmarshal(bytes, &resp)
+	err = json.Unmarshal(bytes, &resp)
+	if err != nil {
+		return nil, err
+	}
 	return
 }
