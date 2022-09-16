@@ -13,6 +13,7 @@ type Category struct {
 
 func (g *GoodsAPI) GoodsAuthorizationCatGet(parentCatId int) (resp []*Category, err error) {
 	params := NewParamsWithType("pdd.goods.cats.get")
+	params.Set("access_token", AccessToken)
 	params.Set("parent_cat_id", parentCatId)
 	r, err := Call(g.Context, params)
 	if err != nil {

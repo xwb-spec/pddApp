@@ -24,6 +24,7 @@ func (g *GoodsAPI) GoodsImageUpload(imagePath string) (imageUrl string, err erro
 	}
 	base64Image := base64.StdEncoding.EncodeToString(srcByte)
 	params := NewParamsWithType("pdd.goods.image.upload")
+	params.Set("access_token", AccessToken)
 	params.Set("image", base64Image)
 	r, err := Call(g.Context, params)
 	if err != nil {

@@ -8,6 +8,7 @@ import (
 // the basic call method
 func Call(context *Context, params Params) (r []byte, err error) {
 	params.Sign(context)
+	fmt.Println(params)
 	r, err = Post(context, params.GetQuery())
 	return
 }

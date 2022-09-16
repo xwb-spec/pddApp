@@ -7,6 +7,7 @@ type Pdd struct {
 type Config struct {
 	ClientId     string
 	ClientSecret string
+	EndPoint     string
 	RetryTimes   int
 	Debug        bool
 }

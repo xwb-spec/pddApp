@@ -19,6 +19,7 @@ type LogisticsTemplate struct {
 
 func (g *GoodsAPI) GoodsLogisticsTemplateListGet(page, pageSize int) (resp *GoodsLogisticsTemplateListResponse, err error) {
 	params := NewParamsWithType("pdd.goods.logistics.template.get")
+	params.Set("access_token", AccessToken)
 	params.Set("page", page)
 	params.Set("page_size", pageSize)
 	r, err := Call(g.Context, params)

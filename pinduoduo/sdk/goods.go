@@ -31,12 +31,10 @@ type GoodsAddResponse struct {
 	GoodsId       int `json:"goods_id"`
 	MatchedSpuId  int `json:"matched_spu_id"`
 }
-type GoodsResultResponse struct {
-	GoodsAddResponse GoodsAddResponse `json:"goods_add_response"`
-}
 
-func (g *GoodsAPI) GoodsAdd(goodsName, goodsDesc string, carouselGallery, detailGallery []string, goodsProperties []interface{}) (resp GoodsResultResponse, err error) {
+func (g *GoodsAPI) GoodsAdd(goodsName, goodsDesc string, carouselGallery, detailGallery []string, goodsProperties []interface{}) (resp GoodsAddResponse, err error) {
 	params := NewParamsWithType("pdd.goods.add")
+	params.Set("access_token", AccessToken)
 	params.Set("goods_name", goodsName)             // 商品标题
 	params.Set("goods_desc", goodsDesc)             // 商品描述
 	params.Set("carousel_gallery", carouselGallery) // 商品主图/轮播图
@@ -46,7 +44,10 @@ func (g *GoodsAPI) GoodsAdd(goodsName, goodsDesc string, carouselGallery, detail
 	if err != nil {
 		return
 	}
-	bytes, err := GetResponseBytes(r, "goods_auth_cats_get_response", "goods_cats_list")
-	json.Unmarshal(bytes, &resp)
+	bytes, err := GetResponseBytes(r, "goods_add_response")
+	err = json.Unmarshal(bytes, &resp)
+	if err != nil {
+		return GoodsAddResponse{}, err
+	}
 	return
 }

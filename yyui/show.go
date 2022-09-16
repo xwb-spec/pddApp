@@ -12,6 +12,7 @@ import (
 	"log"
 	"os"
 	"pddApp/pinduoduo/client"
+	"pddApp/pinduoduo/sdk"
 )
 
 type ShowInput struct {
@@ -44,16 +45,15 @@ func (s *ShowInput) LoginContainer() *fyne.Container {
 	loginShopIdLabel := widget.NewLabel("店铺id")
 	s.MallId = widget.NewEntry()
 	loginButton := widget.NewButton("二维码", func() { // //回调函数
-		c := client.QRCodeRequestParam{
-			Path: "./qrcode.png",
-		}
-		c.GenerateQRCode()
-		image := canvas.NewImageFromFile(c.Path)
+		client.GenerateQRCode()
+		image := canvas.NewImageFromFile("./qrcode.png")
 		image.FillMode = canvas.ImageFillOriginal
 		win := fyne.CurrentApp().NewWindow("扫码登录")
 		win.SetContent(image)
 		win.Resize(fyne.NewSize(300, 300))
 		win.Show()
+		sdk.PopAuthCreateToken()
+		win.Close()
 	})
 	return container.New(layout.NewGridLayout(5), loginShopNameLabel, s.MallName, loginShopIdLabel, s.MallId, loginButton)
 }
