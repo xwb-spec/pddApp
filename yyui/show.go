@@ -56,8 +56,14 @@ func (s *ShowInput) LoginContainer() *fyne.Container {
 		win.Resize(fyne.NewSize(300, 300))
 		win.Show()
 		st, _ := sdk.PopAuthCreateToken()
-		for st == state {
-			win.Close()
+		for {
+			if st == state {
+				win.Close()
+				break
+			} else {
+				st, _ = sdk.PopAuthCreateToken()
+				time.Sleep(10)
+			}
 		}
 	})
 	return container.New(layout.NewGridLayout(5), loginShopNameLabel, s.MallName, loginShopIdLabel, s.MallId, loginButton)
