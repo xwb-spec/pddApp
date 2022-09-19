@@ -142,6 +142,7 @@ func (s *ShowInput) GetGoods() (goods []Goods, err error) {
 	return goods, nil
 }
 
+// 批量上传图片
 func (s *ShowInput) UploadImage() (err error) {
 	imageList, err := s.GetImage()
 	if err != nil {

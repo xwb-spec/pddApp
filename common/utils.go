@@ -5,7 +5,6 @@ import (
 	"github.com/xuri/excelize/v2"
 	"os"
 	"sort"
-	"strings"
 )
 
 func IsPathExists(path string) (bool, error) {
@@ -39,34 +38,6 @@ func IsSheetExists(excelPath, sheetName string) bool {
 		return false
 	}
 	return true
-}
-
-func SearchSheet(excelPath, sheetName, key string) (values []string, err error) {
-	f, err := excelize.OpenFile(excelPath)
-	if err != nil {
-		return nil, err
-	}
-	defer f.Close()
-	locList, err := f.SearchSheet(sheetName, key, true)
-	if err != nil {
-		return nil, err
-	}
-	for _, l := range locList {
-		if strings.HasPrefix(l, "A") {
-			lb := strings.Replace(l, "A", "B", 1)
-			lc := strings.Replace(l, "A", "C", 1)
-			bv, err := f.GetCellValue(sheetName, lb)
-			if err != nil {
-				return nil, err
-			}
-			cv, err := f.GetCellValue(sheetName, lc)
-			if err != nil {
-				return nil, err
-			}
-			return []string{bv, cv}, nil
-		}
-	}
-	return nil, err
 }
 
 func CreateJson(filename string, data interface{}) (err error) {
