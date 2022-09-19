@@ -54,15 +54,23 @@ func (s *ShowInput) LoginContainer() *fyne.Container {
 		win.SetContent(image)
 		win.Resize(fyne.NewSize(300, 300))
 		win.Show()
-		for {
+		times := 0
+		for times < 6 {
 			c, _ := client.GetCode()
 			log.Println(c.State)
 			if c.State == state { // 拿到最新code
 				_ = client.PopAuthCreateToken() // 拿token
 				win.Close()                     // 关闭二维码
-				break
+				times = 6
 			}
 			time.Sleep(3 * time.Second)
+			times += 1
+			win.SetOnClosed(func() {
+				times = 6
+			})
+		}
+		if times == 6 {
+			win.Close()
 		}
 	})
 	return container.New(layout.NewGridLayout(5), loginShopNameLabel, s.MallName, loginShopIdLabel, s.MallId, loginButton)
