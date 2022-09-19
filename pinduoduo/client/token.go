@@ -11,17 +11,26 @@ import (
 )
 
 const (
-	CliId         = "11111"
-	CliSecret     = "22222"
-	RedirectUri   = "https://cback.whitewolvesx.com:8088/api/v1/callback/"
-	OAuthEndPoint = "https://open-api.pinduoduo.com/oauth/token"
-	EndPoint      = "https://gw-api.pinduoduo.com/api/router"
+	CliId       = "11111"
+	CliSecret   = "22222"
+	RedirectUri = "https://cback.whitewolvesx.com:8088/api/v1/callback/"
 )
 
 var (
 	AccessToken  string
 	RefreshToken string
-	State        string
+	AuthClient   = sdk.NewPdd(&sdk.Config{
+		ClientId:     CliId,
+		ClientSecret: CliSecret,
+		EndPoint:     "https://open-api.pinduoduo.com/oauth/token",
+		RetryTimes:   1, // 设置接口调用失败重试次数
+	})
+	NewClient = sdk.NewPdd(&sdk.Config{
+		ClientId:     CliId,
+		ClientSecret: CliSecret,
+		EndPoint:     "https://gw-api.pinduoduo.com/api/router",
+		RetryTimes:   1, // 设置接口调用失败重试次数
+	})
 )
 
 type CodeResponse struct {
@@ -52,14 +61,8 @@ func GetCode() (CodeResponse, error) {
 
 // 获取token
 func PopAuthCreateToken() (err error) {
-	p := sdk.NewPdd(&sdk.Config{
-		ClientId:     CliId,
-		ClientSecret: CliSecret,
-		EndPoint:     OAuthEndPoint,
-		RetryTimes:   1, // 设置接口调用失败重试次数
-	})
 	code, err := GetCode()
-	pdd := p.TokenAPI()
+	pdd := AuthClient.TokenAPI()
 	params := sdk.NewParams()
 	params.Set("code", code.Code)
 	params.Set("client_secret", CliSecret)
@@ -74,13 +77,7 @@ func PopAuthCreateToken() (err error) {
 
 // 刷新token
 func PopAuthRefreshToken() (err error) {
-	p := sdk.NewPdd(&sdk.Config{
-		ClientId:     CliId,
-		ClientSecret: CliSecret,
-		EndPoint:     OAuthEndPoint,
-		RetryTimes:   3, // 设置接口调用失败重试次数
-	})
-	pdd := p.TokenAPI()
+	pdd := AuthClient.TokenAPI()
 	params := sdk.NewParams()
 	params.Set("refresh_token", RefreshToken)
 	params.Set("client_secret", CliSecret)
