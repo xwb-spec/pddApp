@@ -1,35 +1,30 @@
 package client
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/skip2/go-qrcode"
+	"io/ioutil"
 	"log"
+	"net/http"
+	"pddApp/pinduoduo/sdk"
 )
 
-//// 公共参数
-//type CommonRequestParam struct {
-//	Sign        string `json:"sign"` // 请求签名
-//	Type        string `json:"type"` // 接口类型
-//	ClientId    string `json:"client_id"`
-//	TimeStamp   string `json:"timestamp"` //时间戳
-//	DataType    string `json:"data_type"` // 返回数据类型JSON
-//	AccessToken string `json:"access_token"`
-//	Version     string `json:"version"`
-//}
-//type CreateTokenRequestParam struct {
-//	Code string `json:"code"`
-//	CommonRequestParam
-//}
+const (
+	CliId         = "11111"
+	CliSecret     = "22222"
+	RedirectUri   = "https://cback.whitewolvesx.com:8088/api/v1/callback/"
+	OAuthEndPoint = "https://open-api.pinduoduo.com/oauth/token"
+	EndPoint      = "https://gw-api.pinduoduo.com/api/router"
+)
 
 var (
-	CliId        string
-	CliSecret    string
-	token        string
-	refreshToken string
-	RedirectUri  = "https://cback.whitewolvesx.com:8088/api/v1/callback/"
+	AccessToken  string
+	RefreshToken string
+	State        string
 )
 
-type ReturnCodeResponse struct {
+type CodeResponse struct {
 	Code  string `json:"code"`  // 返回code
 	State string `json:"state"` // 状态
 }
@@ -41,4 +36,58 @@ func GenerateQRCode(state string) {
 		CliId, RedirectUri, state), qrcode.Medium, 256, "./qrcode.png"); err != nil {
 		log.Printf("[ERROR]: 生成二维码失败, %s\n", err)
 	}
+}
+
+func GetCode() (CodeResponse, error) {
+	resp, err := http.Post(RedirectUri, "application/json;charset=utf-8", nil)
+	if err != nil {
+		log.Fatal("获取code失败")
+	}
+	defer resp.Body.Close()
+	var code CodeResponse
+	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	_ = json.Unmarshal(bodyBytes, &code)
+	return code, nil
+}
+
+// 获取token
+func PopAuthCreateToken() (err error) {
+	p := sdk.NewPdd(&sdk.Config{
+		ClientId:     CliId,
+		ClientSecret: CliSecret,
+		EndPoint:     OAuthEndPoint,
+		RetryTimes:   1, // 设置接口调用失败重试次数
+	})
+	code, err := GetCode()
+	pdd := p.TokenAPI()
+	params := sdk.NewParams()
+	params.Set("code", code.Code)
+	params.Set("client_secret", CliSecret)
+	resp, err := pdd.PopAuthTokenCreate()
+	if err != nil {
+		return err
+	}
+	AccessToken = resp.AccessToken
+	RefreshToken = resp.RefreshToken
+	return nil
+}
+
+// 刷新token
+func PopAuthRefreshToken() (err error) {
+	p := sdk.NewPdd(&sdk.Config{
+		ClientId:     CliId,
+		ClientSecret: CliSecret,
+		EndPoint:     OAuthEndPoint,
+		RetryTimes:   3, // 设置接口调用失败重试次数
+	})
+	pdd := p.TokenAPI()
+	params := sdk.NewParams()
+	params.Set("refresh_token", RefreshToken)
+	params.Set("client_secret", CliSecret)
+	resp, err := pdd.PopAuthTokenRefresh()
+	if err != nil {
+		return
+	}
+	AccessToken = resp.AccessToken
+	return nil
 }

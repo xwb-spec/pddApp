@@ -12,7 +12,6 @@ import (
 	"log"
 	"os"
 	"pddApp/pinduoduo/client"
-	"pddApp/pinduoduo/sdk"
 	"strconv"
 	"time"
 )
@@ -55,15 +54,15 @@ func (s *ShowInput) LoginContainer() *fyne.Container {
 		win.SetContent(image)
 		win.Resize(fyne.NewSize(300, 300))
 		win.Show()
-		st, _ := sdk.PopAuthCreateToken()
 		for {
-			if st == state {
-				win.Close()
+			c, _ := client.GetCode()
+			log.Println(c.State)
+			if c.State == state { // 拿到最新code
+				_ = client.PopAuthCreateToken() // 拿token
+				win.Close()                     // 关闭二维码
 				break
-			} else {
-				st, _ = sdk.PopAuthCreateToken()
-				time.Sleep(10)
 			}
+			time.Sleep(3 * time.Second)
 		}
 	})
 	return container.New(layout.NewGridLayout(5), loginShopNameLabel, s.MallName, loginShopIdLabel, s.MallId, loginButton)
@@ -284,7 +283,7 @@ func (s *ShowInput) ButtonContainer() *fyne.Container {
 }
 func (s *ShowInput) ResultContainer() *fyne.Container {
 	s.ConsoleResult = widget.NewMultiLineEntry()
-	s.ConsoleResult.Resize(fyne.NewSize(790, 230))
+	s.ConsoleResult.Resize(fyne.NewSize(800, 300))
 	s.ConsoleResult.SetText(s.ConsoleResult.Text)
 	return container.NewWithoutLayout(s.ConsoleResult)
 }

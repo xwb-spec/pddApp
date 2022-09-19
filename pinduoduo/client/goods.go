@@ -14,7 +14,7 @@ func GoodsCatRuleGet() {
 	})
 	pdd := p.GoodAPI()
 	params := sdk.NewParams()
-	params.Set("generate_short_url", true)
+	params.Set("access_token", AccessToken)
 	resp, err := pdd.GoodsCatRuleGet()
 	if err != nil {
 		log.Println("获取商品发布规则失败")

@@ -11,9 +11,8 @@ type Category struct {
 	CatName string `json:"cat_name"`
 }
 
-func (g *GoodsAPI) GoodsAuthorizationCatGet(parentCatId int) (resp []*Category, err error) {
-	params := NewParamsWithType("pdd.goods.cats.get")
-	params.Set("access_token", AccessToken)
+func (g *GoodsAPI) GoodsAuthorizationCatGet(parentCatId int, mustParams ...Params) (resp []*Category, err error) {
+	params := NewParamsWithType("pdd.goods.cats.get", mustParams...)
 	params.Set("parent_cat_id", parentCatId)
 	r, err := Call(g.Context, params)
 	if err != nil {

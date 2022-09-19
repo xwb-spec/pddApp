@@ -32,14 +32,8 @@ type GoodsAddResponse struct {
 	MatchedSpuId  int `json:"matched_spu_id"`
 }
 
-func (g *GoodsAPI) GoodsAdd(goodsName, goodsDesc string, carouselGallery, detailGallery []string, goodsProperties []interface{}) (resp GoodsAddResponse, err error) {
-	params := NewParamsWithType("pdd.goods.add")
-	params.Set("access_token", AccessToken)
-	params.Set("goods_name", goodsName)             // 商品标题
-	params.Set("goods_desc", goodsDesc)             // 商品描述
-	params.Set("carousel_gallery", carouselGallery) // 商品主图/轮播图
-	params.Set("detail_gallery", detailGallery)     //商品详情图
-	params.Set("goods_properties", goodsProperties)
+func (g *GoodsAPI) GoodsAdd(mustParams ...Params) (resp GoodsAddResponse, err error) {
+	params := NewParamsWithType("pdd.goods.add", mustParams...)
 	r, err := Call(g.Context, params)
 	if err != nil {
 		return

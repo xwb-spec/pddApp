@@ -18,9 +18,8 @@ type RuleProperties struct {
 }
 
 // 发布规则查询接口
-func (g *GoodsAPI) GoodsCatRuleGet(notMustparams ...Params) (resp []*RuleProperties, err error) {
-	params := NewParamsWithType("pdd.goods.cat.rule.get")
-	params.Set("access_token", AccessToken)
+func (g *GoodsAPI) GoodsCatRuleGet(mustParams ...Params) (resp []*RuleProperties, err error) {
+	params := NewParamsWithType("pdd.goods.cat.rule.get", mustParams...)
 	params.Set("cat_id", 3045)
 	r, err := Call(g.Context, params)
 	if err != nil {
