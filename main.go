@@ -7,31 +7,7 @@ import (
 	"pddApp/yyui/theme"
 )
 
-//设置字体
-//func init() {
-//	fontPaths := findfont.List()
-//	for _, fontPath := range fontPaths {
-//		//fmt.Println(fontPath)
-//		//楷体:simkai.ttf
-//		//黑体:simhei.ttf
-//		//微软雅黑：msyh.ttc
-//		if strings.Contains(fontPath, "/Users/machao/OptRepo/GolandProjects/awesomeProject/learning-golang/day41/simkai.ttf") {
-//			err := os.Setenv("FYNE_FONT", fontPath)
-//			if err != nil {
-//				fmt.Println(err)
-//				return
-//			}
-//			break
-//		}
-//	}
-//}
 func runWin() {
-	//err := os.Setenv("FYNE_FONT", "./simkai.ttf")
-	//if err != nil {
-	//	fmt.Println(err)
-	//	return
-	//}
-	//新建一个app
 	a := app.New()
 	//设置窗口栏，任务栏图标
 	//a.SetIcon(resourceIconPng)
