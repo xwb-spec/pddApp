@@ -163,7 +163,7 @@ func (s *ShowInput) UploadImage() (err error) {
 	wg.Wait()
 	imageMap := make(map[string]string)
 	// Range遍历所有sync.Map中的键值对
-	syncMap.Range(func(k, v interface{}) bool {
+	syncMap.Range(func(k, v any) bool {
 		imageMap[k.(string)] = v.(string)
 		return true
 	})

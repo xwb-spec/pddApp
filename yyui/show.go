@@ -39,13 +39,18 @@ type ShowInput struct {
 	ConsoleResult       *widget.Entry
 }
 
+type LoginInput struct {
+	Username *widget.Entry
+	Password *widget.Entry
+}
+
 func (s *ShowInput) LoginContainer() *fyne.Container {
 	// 登录框
 	loginShopNameLabel := widget.NewLabel("店铺名")
 	s.MallName = widget.NewEntry()
 	loginShopIdLabel := widget.NewLabel("店铺id")
 	s.MallId = widget.NewEntry()
-	loginButton := widget.NewButton("二维码", func() { // //回调函数
+	loginButton := widget.NewButton("登录", func() { // //回调函数
 		state := strconv.FormatInt(time.Now().Unix(), 10)
 		client.GenerateQRCode(state)
 		image := canvas.NewImageFromFile("./qrcode.png")
