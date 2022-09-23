@@ -2,6 +2,7 @@ package yyui
 
 import (
 	"encoding/json"
+	"fmt"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
@@ -40,8 +41,41 @@ type ShowInput struct {
 }
 
 type LoginInput struct {
+	Win      fyne.Window
 	Username *widget.Entry
 	Password *widget.Entry
+}
+
+type QRCodeInput struct {
+	Win fyne.Window
+}
+
+func (s *QRCodeInput) QRCodeShow(w fyne.Window) {
+	s.Win = w
+	image := canvas.NewImageFromFile("./qrcode.png")
+	image.FillMode = canvas.ImageFillOriginal
+	w.SetContent(image)
+}
+
+func (s *LoginInput) LoginContainer() *widget.Form {
+	nameEntry := widget.NewEntry()
+	passEntry := widget.NewPasswordEntry()
+	form := widget.NewForm(
+		widget.NewFormItem("用户名", widget.NewEntry()),
+		widget.NewFormItem("密码", widget.NewPasswordEntry()),
+	)
+	form.OnSubmit = func() {
+		fmt.Println("name:", nameEntry.Text, "pass:", passEntry.Text, "登录")
+	}
+	form.SubmitText = "登录"
+	return form
+}
+func (s *LoginInput) LoginShow(w fyne.Window) {
+	s.Win = w
+	box := container.NewVBox(
+		s.LoginContainer(),
+	) //控制显示位置顺序
+	w.SetContent(box)
 }
 
 func (s *ShowInput) LoginContainer() *fyne.Container {
