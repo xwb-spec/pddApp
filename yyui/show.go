@@ -2,7 +2,6 @@ package yyui
 
 import (
 	"encoding/json"
-	"fmt"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
@@ -10,11 +9,17 @@ import (
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/storage"
 	"fyne.io/fyne/v2/widget"
+	"image/color"
 	"log"
 	"os"
 	"pddApp/pinduoduo/client"
 	"strconv"
 	"time"
+)
+
+const (
+	USER = "admin"
+	PASS = "admin"
 )
 
 type ShowInput struct {
@@ -41,9 +46,10 @@ type ShowInput struct {
 }
 
 type LoginInput struct {
-	Win      fyne.Window
-	Username *widget.Entry
-	Password *widget.Entry
+	Win       fyne.Window
+	nameEntry *widget.Entry
+	passEntry *widget.Entry
+	label     *canvas.Text
 }
 
 type QRCodeInput struct {
@@ -58,14 +64,33 @@ func (s *QRCodeInput) QRCodeShow(w fyne.Window) {
 }
 
 func (s *LoginInput) LoginContainer() *widget.Form {
-	nameEntry := widget.NewEntry()
-	passEntry := widget.NewPasswordEntry()
+	s.nameEntry = widget.NewEntry()
+	s.passEntry = widget.NewPasswordEntry()
 	form := widget.NewForm(
-		widget.NewFormItem("用户名", widget.NewEntry()),
-		widget.NewFormItem("密码", widget.NewPasswordEntry()),
+		widget.NewFormItem("用户名", s.nameEntry),
+		widget.NewFormItem("密码", s.passEntry),
 	)
+	s.label = canvas.NewText("", color.White)
 	form.OnSubmit = func() {
-		fmt.Println("name:", nameEntry.Text, "pass:", passEntry.Text, "登录")
+		if s.nameEntry.Text == USER && s.passEntry.Text == PASS {
+			s.label.Color = color.RGBA{
+				R: 124,
+				G: 252,
+				B: 0,
+				A: 0,
+			}
+			s.label.Text = "登录成功"
+			s.label.Refresh()
+		} else {
+			s.label.Color = color.RGBA{
+				R: 255,
+				G: 0,
+				B: 0,
+				A: 0,
+			}
+			s.label.Text = "账号密码错误"
+			s.label.Refresh()
+		}
 	}
 	form.SubmitText = "登录"
 	return form
@@ -74,6 +99,7 @@ func (s *LoginInput) LoginShow(w fyne.Window) {
 	s.Win = w
 	box := container.NewVBox(
 		s.LoginContainer(),
+		s.label,
 	) //控制显示位置顺序
 	w.SetContent(box)
 }
