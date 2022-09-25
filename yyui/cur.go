@@ -6,6 +6,8 @@ import (
 )
 
 type CurInput struct {
+	Acc                 string `json:"acc"`
+	Pwd                 string `json:"pwd"`
 	MallName            string `json:"MallName"`            // 店铺名
 	MallId              string `json:"MallId"`              // 店铺id
 	LogisticsTemp       string `json:"LogisticsTemp"`       // 运费模板
@@ -28,6 +30,8 @@ type CurInput struct {
 
 func (s *ShowInput) SaveInput() {
 	curInput := CurInput{
+		Acc:                 s.Acc.Text,
+		Pwd:                 s.Pwd.Text,
 		MallName:            s.MallName.Text,
 		MallId:              s.MallId.Text,
 		LogisticsTemp:       s.LogisticsTemp.Selected,
@@ -57,6 +61,8 @@ func (s *ShowInput) GetInput() {
 		log.Println("读取acc.json失败", err.Error())
 	} else {
 		log.Println("读取acc.json成功")
+		s.Acc.SetText(curInput.Acc)
+		s.Pwd.SetText(curInput.Pwd)
 		s.MallId.SetText(curInput.MallId)
 		s.MallName.SetText(curInput.MallName)
 		s.LogisticsTemp.SetSelected(curInput.LogisticsTemp)

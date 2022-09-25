@@ -23,7 +23,11 @@ const (
 )
 
 type ShowInput struct {
-	Win                 fyne.Window
+	MainWin             fyne.Window
+	LoginWin            fyne.Window
+	Acc                 *widget.Entry
+	Pwd                 *widget.Entry
+	Info                *canvas.Text
 	MallName            *widget.Entry  // 店铺名
 	MallId              *widget.Entry  // 店铺id
 	LogisticsTemp       *widget.Select // 运费模板
@@ -45,66 +49,50 @@ type ShowInput struct {
 	ConsoleResult       *widget.Entry
 }
 
-type LoginInput struct {
-	Win       fyne.Window
-	nameEntry *widget.Entry
-	passEntry *widget.Entry
-	label     *canvas.Text
-}
-
-type QRCodeInput struct {
-	Win fyne.Window
-}
-
-func (s *QRCodeInput) QRCodeShow(w fyne.Window) {
-	s.Win = w
-	image := canvas.NewImageFromFile("./qrcode.png")
-	image.FillMode = canvas.ImageFillOriginal
-	w.SetContent(image)
-}
-
-func (s *LoginInput) LoginContainer() *widget.Form {
-	s.nameEntry = widget.NewEntry()
-	s.passEntry = widget.NewPasswordEntry()
+func (s *ShowInput) LoginContainer() *widget.Form {
+	s.Acc = widget.NewEntry()
+	s.Pwd = widget.NewPasswordEntry()
 	form := widget.NewForm(
-		widget.NewFormItem("用户名", s.nameEntry),
-		widget.NewFormItem("密码", s.passEntry),
+		widget.NewFormItem("用户名", s.Acc),
+		widget.NewFormItem("密码", s.Pwd),
 	)
-	s.label = canvas.NewText("", color.White)
+	s.Info = canvas.NewText("", color.White)
 	form.OnSubmit = func() {
-		if s.nameEntry.Text == USER && s.passEntry.Text == PASS {
-			s.label.Color = color.RGBA{
+		if s.Acc.Text == USER && s.Pwd.Text == PASS {
+			s.Info.Color = color.RGBA{
 				R: 124,
 				G: 252,
 				B: 0,
 				A: 0,
 			}
-			s.label.Text = "登录成功"
-			s.label.Refresh()
+			s.Info.Text = "登录成功"
+			s.Info.Refresh()
+			s.LoginWin.Hide() // 主窗口不能关闭只能暂时隐藏
+			log.Println("ud")
+			QRCodeWindow()
 		} else {
-			s.label.Color = color.RGBA{
+			s.Info.Color = color.RGBA{
 				R: 255,
 				G: 0,
 				B: 0,
 				A: 0,
 			}
-			s.label.Text = "账号密码错误"
-			s.label.Refresh()
+			s.Info.Text = "账号密码错误"
+			s.Info.Refresh()
 		}
 	}
 	form.SubmitText = "登录"
 	return form
 }
-func (s *LoginInput) LoginShow(w fyne.Window) {
-	s.Win = w
+func (s *ShowInput) LoginShow(w fyne.Window) {
+	s.LoginWin = w
 	box := container.NewVBox(
 		s.LoginContainer(),
-		s.label,
+		s.Info,
 	) //控制显示位置顺序
 	w.SetContent(box)
 }
-
-func (s *ShowInput) LoginContainer() *fyne.Container {
+func (s *ShowInput) MallContainer() *fyne.Container {
 	// 登录框
 	loginShopNameLabel := widget.NewLabel("店铺名")
 	s.MallName = widget.NewEntry()
@@ -161,7 +149,7 @@ func (s *ShowInput) ImageDirContainer() *fyne.Container {
 	picKitDirButton := widget.NewButton("...", func() {
 		dialog.ShowFolderOpen(func(list fyne.ListableURI, err error) {
 			if err != nil {
-				dialog.ShowError(err, s.Win)
+				dialog.ShowError(err, s.MainWin)
 				return
 			}
 			if list == nil {
@@ -170,7 +158,7 @@ func (s *ShowInput) ImageDirContainer() *fyne.Container {
 			}
 			//设置输入框内容
 			s.ImageDir.SetText(list.Path())
-		}, s.Win)
+		}, s.MainWin)
 	})
 	return container.NewBorder(layout.NewSpacer(), layout.NewSpacer(), picKitDirLabel, picKitDirButton, s.ImageDir)
 }
@@ -182,7 +170,7 @@ func (s *ShowInput) PublicDirContainer() *fyne.Container {
 	publicDirButton := widget.NewButton("...", func() {
 		dialog.ShowFolderOpen(func(list fyne.ListableURI, err error) {
 			if err != nil {
-				dialog.ShowError(err, s.Win)
+				dialog.ShowError(err, s.MainWin)
 				return
 			}
 			if list == nil {
@@ -191,7 +179,7 @@ func (s *ShowInput) PublicDirContainer() *fyne.Container {
 			}
 			//设置输入框内容
 			s.PublicDir.SetText(list.Path())
-		}, s.Win)
+		}, s.MainWin)
 	})
 	return container.NewBorder(layout.NewSpacer(), layout.NewSpacer(), publicDirLabel, publicDirButton, s.PublicDir)
 }
@@ -203,7 +191,7 @@ func (s *ShowInput) UploadedImageContainer() *fyne.Container {
 	uploadedPicFileButton := widget.NewButton("...", func() {
 		fd := dialog.NewFileOpen(func(reader fyne.URIReadCloser, err error) {
 			if err != nil {
-				dialog.ShowError(err, s.Win)
+				dialog.ShowError(err, s.MainWin)
 				return
 			}
 			if reader == nil {
@@ -211,7 +199,7 @@ func (s *ShowInput) UploadedImageContainer() *fyne.Container {
 				return
 			}
 			s.UploadedImage.SetText(reader.URI().Path()) //把读取到的路径显示到输入框中
-		}, s.Win)
+		}, s.MainWin)
 		fd.SetFilter(storage.NewExtensionFileFilter([]string{".json"})) //打开的文件格式类型
 		fd.Show()
 	})
@@ -225,7 +213,7 @@ func (s *ShowInput) GoodsExcelContainer() *fyne.Container {
 	shopExcelButton := widget.NewButton("...", func() {
 		fd := dialog.NewFileOpen(func(reader fyne.URIReadCloser, err error) {
 			if err != nil {
-				dialog.ShowError(err, s.Win)
+				dialog.ShowError(err, s.MainWin)
 				return
 			}
 			if reader == nil {
@@ -233,7 +221,7 @@ func (s *ShowInput) GoodsExcelContainer() *fyne.Container {
 				return
 			}
 			s.GoodsExcel.SetText(reader.URI().Path()) //把读取到的路径显示到输入框中
-		}, s.Win)
+		}, s.MainWin)
 		fd.SetFilter(storage.NewExtensionFileFilter([]string{".xlsx"})) //打开的文件格式类型
 		fd.Show()
 	})
@@ -246,7 +234,7 @@ func (s *ShowInput) SkuExcelContainer() *fyne.Container {
 	skuExcelButton := widget.NewButton("...", func() {
 		fd := dialog.NewFileOpen(func(reader fyne.URIReadCloser, err error) {
 			if err != nil {
-				dialog.ShowError(err, s.Win)
+				dialog.ShowError(err, s.MainWin)
 				return
 			}
 			if reader == nil {
@@ -254,7 +242,7 @@ func (s *ShowInput) SkuExcelContainer() *fyne.Container {
 				return
 			}
 			s.SkuConfigExcel.SetText(reader.URI().Path()) //把读取到的路径显示到输入框中
-		}, s.Win)
+		}, s.MainWin)
 		fd.SetFilter(storage.NewExtensionFileFilter([]string{".xlsx"})) //打开的文件格式类型
 		fd.Show()
 	})
@@ -267,7 +255,7 @@ func (s *ShowInput) ModelImageExcelContainer() *fyne.Container {
 	modelExcelButton := widget.NewButton("...", func() {
 		fd := dialog.NewFileOpen(func(reader fyne.URIReadCloser, err error) {
 			if err != nil {
-				dialog.ShowError(err, s.Win)
+				dialog.ShowError(err, s.MainWin)
 				return
 			}
 			if reader == nil {
@@ -275,7 +263,7 @@ func (s *ShowInput) ModelImageExcelContainer() *fyne.Container {
 				return
 			}
 			s.ModelImageExcel.SetText(reader.URI().Path()) //把读取到的路径显示到输入框中
-		}, s.Win)
+		}, s.MainWin)
 		fd.SetFilter(storage.NewExtensionFileFilter([]string{".xlsx"})) //打开的文件格式类型
 		fd.Show()
 	})
@@ -361,9 +349,9 @@ func (s *ShowInput) ResultContainer() *fyne.Container {
 	return container.NewWithoutLayout(s.ConsoleResult)
 }
 func (s *ShowInput) MainShow(w fyne.Window) {
-	s.Win = w
+	s.MainWin = w
 	box := container.NewVBox(
-		s.LoginContainer(),
+		s.MallContainer(),
 		s.LogisticsTempContainer(),
 		s.PublicDirContainer(),
 		s.ImageDirContainer(),
