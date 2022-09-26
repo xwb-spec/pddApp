@@ -3,18 +3,13 @@ package yyui
 import (
 	"encoding/json"
 	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/storage"
 	"fyne.io/fyne/v2/widget"
-	"image/color"
 	"log"
 	"os"
-	"pddApp/pinduoduo/client"
-	"strconv"
-	"time"
 )
 
 const (
@@ -23,11 +18,8 @@ const (
 )
 
 type ShowInput struct {
+	LoginInput
 	MainWin             fyne.Window
-	LoginWin            fyne.Window
-	Acc                 *widget.Entry
-	Pwd                 *widget.Entry
-	Info                *canvas.Text
 	MallName            *widget.Entry  // 店铺名
 	MallId              *widget.Entry  // 店铺id
 	LogisticsTemp       *widget.Select // 运费模板
@@ -49,82 +41,14 @@ type ShowInput struct {
 	ConsoleResult       *widget.Entry
 }
 
-func (s *ShowInput) LoginContainer() *widget.Form {
-	s.Acc = widget.NewEntry()
-	s.Pwd = widget.NewPasswordEntry()
-	form := widget.NewForm(
-		widget.NewFormItem("用户名", s.Acc),
-		widget.NewFormItem("密码", s.Pwd),
-	)
-	s.Info = canvas.NewText("", color.White)
-	form.OnSubmit = func() {
-		if s.Acc.Text == USER && s.Pwd.Text == PASS {
-			s.Info.Color = color.RGBA{
-				R: 124,
-				G: 252,
-				B: 0,
-				A: 0,
-			}
-			s.Info.Text = "登录成功"
-			s.Info.Refresh()
-			s.LoginWin.Hide() // 主窗口不能关闭只能暂时隐藏
-			log.Println("ud")
-			QRCodeWindow()
-		} else {
-			s.Info.Color = color.RGBA{
-				R: 255,
-				G: 0,
-				B: 0,
-				A: 0,
-			}
-			s.Info.Text = "账号密码错误"
-			s.Info.Refresh()
-		}
-	}
-	form.SubmitText = "登录"
-	return form
-}
-func (s *ShowInput) LoginShow(w fyne.Window) {
-	s.LoginWin = w
-	box := container.NewVBox(
-		s.LoginContainer(),
-		s.Info,
-	) //控制显示位置顺序
-	w.SetContent(box)
-}
 func (s *ShowInput) MallContainer() *fyne.Container {
 	// 登录框
 	loginShopNameLabel := widget.NewLabel("店铺名")
 	s.MallName = widget.NewEntry()
 	loginShopIdLabel := widget.NewLabel("店铺id")
 	s.MallId = widget.NewEntry()
-	loginButton := widget.NewButton("登录", func() { // //回调函数
-		state := strconv.FormatInt(time.Now().Unix(), 10)
-		client.GenerateQRCode(state)
-		image := canvas.NewImageFromFile("./qrcode.png")
-		image.FillMode = canvas.ImageFillOriginal
-		win := fyne.CurrentApp().NewWindow("扫码登录")
-		win.SetContent(image)
-		win.Resize(fyne.NewSize(300, 300))
-		win.Show()
-		times := 0
-		for times < 6 {
-			c, _ := client.GetCode()
-			log.Println(c.State)
-			if c.State == state { // 拿到最新code
-				_ = client.PopAuthCreateToken() // 拿token
-				win.Close()                     // 关闭二维码
-				times = 6
-			}
-			time.Sleep(3 * time.Second)
-			times += 1
-			win.SetOnClosed(func() {
-				times = 6
-			})
-		}
-		if times == 6 {
-			win.Close()
-		}
+	loginButton := widget.NewButton("登出", func() { // //回调函数
+		s.MainWin.Close()
 	})
 	return container.New(layout.NewGridLayout(5), loginShopNameLabel, s.MallName, loginShopIdLabel, s.MallId, loginButton)
 }

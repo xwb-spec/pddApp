@@ -1,6 +1,7 @@
 package yyui
 
 import (
+	"encoding/base64"
 	"log"
 	"pddApp/common"
 )
@@ -29,9 +30,10 @@ type CurInput struct {
 }
 
 func (s *ShowInput) SaveInput() {
+	encodePwd := base64.StdEncoding.EncodeToString([]byte(PwdInput))
 	curInput := CurInput{
-		Acc:                 s.Acc.Text,
-		Pwd:                 s.Pwd.Text,
+		Acc:                 AccInput,
+		Pwd:                 encodePwd,
 		MallName:            s.MallName.Text,
 		MallId:              s.MallId.Text,
 		LogisticsTemp:       s.LogisticsTemp.Selected,
@@ -61,8 +63,8 @@ func (s *ShowInput) GetInput() {
 		log.Println("读取acc.json失败", err.Error())
 	} else {
 		log.Println("读取acc.json成功")
-		s.Acc.SetText(curInput.Acc)
-		s.Pwd.SetText(curInput.Pwd)
+		//s.Acc.SetText(curInput.Acc)
+		//s.Pwd.SetText(curInput.Pwd)
 		s.MallId.SetText(curInput.MallId)
 		s.MallName.SetText(curInput.MallName)
 		s.LogisticsTemp.SetSelected(curInput.LogisticsTemp)
@@ -81,5 +83,50 @@ func (s *ShowInput) GetInput() {
 		s.SkuAutoCode.SetChecked(curInput.SkuAutoCode)
 		s.IsSubmit.SetChecked(curInput.IsSubmit)
 		s.IsOnline.SetChecked(curInput.IsOnline)
+	}
+}
+
+func (s *ShowInput) GetAcc() {
+	var curInput CurInput
+	if err := common.LoadJson("./acc.json", &curInput); err != nil {
+		log.Println("读取acc.json失败", err.Error())
+	} else {
+		log.Println("读取acc.json成功")
+		decodePwd, _ := base64.StdEncoding.DecodeString(curInput.Pwd)
+		s.Acc.SetText(curInput.Acc)
+		s.Pwd.SetText(string(decodePwd))
+	}
+}
+
+func (s *ShowInput) SaveAcc() {
+	var cur CurInput
+	if err := common.LoadJson("./acc.json", &cur); err != nil {
+		log.Println("读取acc.json失败", err.Error())
+	}
+	encodePwd := base64.StdEncoding.EncodeToString([]byte(PwdInput))
+	curInput := CurInput{
+		Acc:                 AccInput,
+		Pwd:                 encodePwd,
+		MallName:            cur.MallName,
+		MallId:              cur.MallId,
+		LogisticsTemp:       cur.LogisticsTemp,
+		ImageDir:            cur.ImageDir,
+		PublicDir:           cur.PublicDir,
+		UploadedImage:       cur.UploadedImage,
+		GoodsExcel:          cur.GoodsExcel,
+		SkuConfigExcel:      cur.SkuConfigExcel,
+		ModelImageExcel:     cur.ModelImageExcel,
+		GoodsSheetName:      cur.GoodsSheetName,
+		SkuConfigSheetName:  cur.SkuConfigSheetName,
+		ModelImageSheetName: cur.ModelImageSheetName,
+		AttrSheetName:       cur.AttrSheetName,
+		SkuCombType:         cur.SkuCombType,
+		SkuSortType:         cur.SkuSortType,
+		SkuAutoCode:         cur.SkuAutoCode,
+		IsSubmit:            cur.IsSubmit,
+		IsOnline:            cur.IsOnline,
+	}
+	if err := common.CreateJson("./acc.json", curInput); err != nil {
+		log.Println("acc.json保存错误", err.Error())
 	}
 }
