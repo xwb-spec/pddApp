@@ -62,6 +62,10 @@ func (s *ShowInput) LoginContainer() *widget.Form {
 			s.Tips.Refresh()
 		}
 	}
+	form.OnCancel = func() {
+		s.LoginWin.Close() // 登录成功关闭登录窗口
+	}
+	form.CancelText = "关闭"
 	form.SubmitText = "登录"
 	return form
 }

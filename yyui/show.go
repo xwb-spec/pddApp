@@ -48,7 +48,10 @@ func (s *ShowInput) MallContainer() *fyne.Container {
 	loginShopIdLabel := widget.NewLabel("店铺id")
 	s.MallId = widget.NewEntry()
 	loginButton := widget.NewButton("登出", func() { // //回调函数
-		s.MainWin.Close()
+		defer s.MainWin.Close()
+		LoginWindow()
+
+		//myapp.Run()
 	})
 	return container.New(layout.NewGridLayout(5), loginShopNameLabel, s.MallName, loginShopIdLabel, s.MallId, loginButton)
 }
