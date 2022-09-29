@@ -8,4 +8,5 @@ func main() {
 	myapp := yyui.NewApp()
 	yyui.LoginWindow()
 	myapp.Run()
+	defer myapp.Quit()
 }
