@@ -5,7 +5,6 @@ import (
 	"github.com/xuri/excelize/v2"
 	"log"
 	"os"
-	"path/filepath"
 	"sort"
 )
 
@@ -72,7 +71,7 @@ func LoadJson(filename string, v interface{}) (err error) {
 }
 
 func GetExec() string {
-	exePath, _ := os.Executable()
+	exePath, _ := os.Getwd()
 	log.Println(exePath)
-	return filepath.Dir(exePath)
+	return exePath
 }
