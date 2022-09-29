@@ -30,6 +30,22 @@ func (s *ShowInput) LoginContainer() *widget.Form {
 	s.Tips = canvas.NewText("", color.White)
 	green := color.NRGBA{R: 0, G: 180, B: 0, A: 255}
 	red := color.NRGBA{R: 255, G: 0, B: 0, A: 255}
+	s.Pwd.OnSubmitted = func(str string) {
+		AccInput = s.Acc.Text
+		PwdInput = s.Pwd.Text
+		s.SaveAcc()
+		if s.Acc.Text == USER && s.Pwd.Text == PASS {
+			s.Tips.Color = green
+			s.Tips.Text = "登录成功"
+			s.Tips.Refresh()
+			QRCodeWindow()
+			s.LoginWin.Close() // 登录成功关闭登录窗口
+		} else {
+			s.Tips.Color = red
+			s.Tips.Text = "账号密码错误"
+			s.Tips.Refresh()
+		}
+	}
 	form.OnSubmit = func() {
 		AccInput = s.Acc.Text
 		PwdInput = s.Pwd.Text
@@ -38,8 +54,8 @@ func (s *ShowInput) LoginContainer() *widget.Form {
 			s.Tips.Color = green
 			s.Tips.Text = "登录成功"
 			s.Tips.Refresh()
-			s.LoginWin.Close() // 登录成功关闭登录窗口
 			QRCodeWindow()
+			s.LoginWin.Close() // 登录成功关闭登录窗口
 		} else {
 			s.Tips.Color = red
 			s.Tips.Text = "账号密码错误"
