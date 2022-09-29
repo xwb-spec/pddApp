@@ -3,6 +3,7 @@ package yyui
 import (
 	"encoding/base64"
 	"log"
+	"path"
 	"pddApp/common"
 )
 
@@ -88,7 +89,7 @@ func (s *ShowInput) GetInput() {
 
 func (s *ShowInput) GetAcc() {
 	var curInput CurInput
-	if err := common.LoadJson("./acc.json", &curInput); err != nil {
+	if err := common.LoadJson(path.Join(common.GetExec(), "acc.json"), &curInput); err != nil {
 		log.Println("读取acc.json失败", err.Error())
 	} else {
 		log.Println("读取acc.json成功")

@@ -3,7 +3,9 @@ package common
 import (
 	"encoding/json"
 	"github.com/xuri/excelize/v2"
+	"log"
 	"os"
+	"path/filepath"
 	"sort"
 )
 
@@ -67,4 +69,10 @@ func LoadJson(filename string, v interface{}) (err error) {
 		return err
 	}
 	return nil
+}
+
+func GetExec() string {
+	exePath, _ := os.Executable()
+	log.Println(exePath)
+	return filepath.Dir(exePath)
 }
