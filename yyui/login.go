@@ -39,7 +39,7 @@ func (s *ShowInput) LoginContainer() *widget.Form {
 			s.Tips.Text = "登录成功"
 			s.Tips.Refresh()
 			//QRCodeWindow()
-			defer s.LoginWin.Close()
+			QRCodeWindow(s.LoginWin)
 			// 登录成功关闭登录窗口
 		} else {
 			s.Tips.Color = red

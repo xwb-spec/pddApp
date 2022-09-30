@@ -12,13 +12,14 @@ import (
 
 var myapp fyne.App
 
-func MainWindow() {
+func MainWindow(w fyne.Window) {
 	ms := ShowInput{}
 	mw := myapp.NewWindow("YY批量上链接V1.0   Xwb ALL Right Reserved QQ:543361609")
 	ms.MainShow(mw)
 	ms.GetInput() // 初始化对话框数据
 	mw.Resize(fyne.Size{Width: 800, Height: 850})
 	mw.CenterOnScreen()
+	w.Close()
 	mw.Show()
 	//myapp.Run()
 }
@@ -49,12 +50,12 @@ func QRCodeWindow(w fyne.Window) {
 	})
 	for {
 		resp, _ := client.GetCode()
+		log.Println(resp)
 		if resp.State == state { // 拿到最新code
 			if err := client.PopAuthCreateToken(); err != nil {
 				log.Fatalln("[ERROR]: 获取token失败")
 			} else {
-				MainWindow()
-				qw.Close()
+				MainWindow(qw)
 				break
 			}
 		}
