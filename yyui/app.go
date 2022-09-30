@@ -38,9 +38,9 @@ func QRCodeWindow() {
 	qs := QRCodeInput{}
 	state := strconv.FormatInt(time.Now().Unix(), 10)
 	client.GenerateQRCode(state)
-	qs.QRCodeShow(qw)
 	qw.Resize(fyne.Size{Width: 300, Height: 300})
 	qw.CenterOnScreen()
+	qs.QRCodeShow(qw)
 	qw.Show()
 	qw.SetOnClosed(func() {
 		qw.Close()
@@ -51,6 +51,7 @@ func QRCodeWindow() {
 			_ = client.PopAuthCreateToken() // 拿token
 			MainWindow()
 			qw.Close()
+			break
 		}
 		time.Sleep(3 * time.Second)
 	}
