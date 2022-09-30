@@ -3,6 +3,7 @@ package yyui
 import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
+	"log"
 	"pddApp/pinduoduo/client"
 	"pddApp/yyui/theme"
 	"strconv"
@@ -33,7 +34,7 @@ func LoginWindow() {
 	//myapp.Run()
 }
 
-func QRCodeWindow() {
+func QRCodeWindow(w fyne.Window) {
 	qw := myapp.NewWindow("扫二维码")
 	qs := QRCodeInput{}
 	state := strconv.FormatInt(time.Now().Unix(), 10)
@@ -41,6 +42,7 @@ func QRCodeWindow() {
 	qw.Resize(fyne.Size{Width: 300, Height: 300})
 	qw.CenterOnScreen()
 	qs.QRCodeShow(qw)
+	w.Close()
 	qw.Show()
 	qw.SetOnClosed(func() {
 		qw.Close()
@@ -48,10 +50,13 @@ func QRCodeWindow() {
 	for {
 		resp, _ := client.GetCode()
 		if resp.State == state { // 拿到最新code
-			_ = client.PopAuthCreateToken() // 拿token
-			MainWindow()
-			qw.Close()
-			break
+			if err := client.PopAuthCreateToken(); err != nil {
+				log.Fatalln("[ERROR]: 获取token失败")
+			} else {
+				MainWindow()
+				qw.Close()
+				break
+			}
 		}
 		time.Sleep(3 * time.Second)
 	}
