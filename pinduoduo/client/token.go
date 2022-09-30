@@ -7,6 +7,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"path"
+	"pddApp/common"
 	"pddApp/pinduoduo/sdk"
 )
 
@@ -42,15 +44,15 @@ type CodeResponse struct {
 func GenerateQRCode(state string) {
 	if err := qrcode.WriteFile(fmt.Sprintf(
 		"https://mai.pinduoduo.com/h5-login.html?response_type=code&client_id=%s&redirect_uri=%s&state=%s&view=h5",
-		CliId, RedirectUri, state), qrcode.Medium, 256, "./qrcode.png"); err != nil {
-		log.Printf("[ERROR]: 生成二维码失败, %s\n", err)
+		CliId, RedirectUri, state), qrcode.Medium, 256, path.Join(common.GetExec(), "qrcode.png")); err != nil {
+		log.Fatal("[ERROR]: 生成二维码失败", err)
 	}
 }
 
 func GetCode() (CodeResponse, error) {
 	resp, err := http.Post(RedirectUri, "application/json;charset=utf-8", nil)
 	if err != nil {
-		log.Fatal("获取code失败")
+		log.Fatal("[ERROR]: 获取code失败")
 	}
 	defer resp.Body.Close()
 	var code CodeResponse
