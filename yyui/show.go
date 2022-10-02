@@ -12,11 +12,6 @@ import (
 	"os"
 )
 
-const (
-	USER = "admin"
-	PASS = "admin"
-)
-
 type ShowInput struct {
 	LoginInput
 	MainWin             fyne.Window

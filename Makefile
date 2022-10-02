@@ -22,3 +22,6 @@ build-macos:
 	CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 fyne package -os darwin -icon yy.ico #打包macos
 
 build-all: macos-install build-windows build-macos
+
+build-api:
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ./pinduoduo/server/  ./pinduoduo/server/main.go
